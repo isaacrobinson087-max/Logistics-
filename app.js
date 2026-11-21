@@ -6,28 +6,22 @@
   const mobileNav=$('mobile-nav');
   const hero=$('hero');
   const heroVideo=$('hero-video');
-  const journey=$('journey');
-  const stage=$('story-stage');
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const canHover=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
   const orderStorageKey='kinetic_v4_demo_orders';
   const clock=(date)=>new Date(date).toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'});
   const safeString=(x)=>String(x ?? '').trim().slice(0,200);
-  let activeRoute='home', heroCompleted=false, currentScene=-1, scrollFrame=0;
-  const vids=[ $('story-video-parcel'), $('story-video-conveyor'), $('story-video-rider') ];
-  const chapterNames=['Preparation','Operations','The road','Visibility'];
-  function welcome(){if(heroCompleted)return;heroCompleted=true;hero.classList.add('has-welcomed');$('skip-intro').hidden=true}
+  let activeRoute='home', heroCompleted=false, scrollFrame=0;
+  function welcome(){if(heroCompleted)return;heroCompleted=true;hero.classList.add('has-welcomed')}
   function initializeHero(){
     if(reducedMotion){heroVideo.pause();welcome();return;}
-    const stopAt=3.73;
-    const stop=()=>{if(heroVideo.currentTime>=stopAt){heroVideo.pause();welcome()}};
-    heroVideo.addEventListener('timeupdate',stop);
-    heroVideo.addEventListener('ended',welcome);
+    const showWhenMoving=()=>{if(heroVideo.currentTime>=0.65)welcome()};
+    heroVideo.addEventListener('timeupdate',showWhenMoving);
+    heroVideo.addEventListener('ended',()=>{heroVideo.pause();welcome()});
     heroVideo.addEventListener('error',welcome);
     const attempt=heroVideo.play();
     if(attempt&&typeof attempt.catch==='function')attempt.catch(welcome);
-    window.setTimeout(welcome,5100);
-    $('skip-intro').addEventListener('click',()=>{heroVideo.pause();welcome()});
+    // Welcome must stay visible if the video stalls or autoplay is blocked.
+    window.setTimeout(welcome,1450);
   }
   function closeMenu(){mobileNav.hidden=true;menu.setAttribute('aria-expanded','false');menu.setAttribute('aria-label','Open menu');}
   menu.addEventListener('click',()=>{const open=mobileNav.hidden;mobileNav.hidden=!open;menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Close menu':'Open menu')});
@@ -40,56 +34,26 @@
     closeMenu();
     document.title=`KINETIC — ${{home:'Every move matters',about:'Our approach',book:'Book & Track',contact:'Contact',account:'Account access',ops:'Operations preview',rider:'Rider preview'}[activeRoute]}`;
     window.scrollTo({top:0,behavior:'instant'});
-    if(activeRoute!=='home'){heroVideo.pause();vids.forEach(v=>v.pause())}
+    if(activeRoute!=='home')heroVideo.pause();
     if(activeRoute==='book')renderTracking();
     if(activeRoute==='ops')renderOperations();
     if(activeRoute==='rider')renderRider();
     updateHeader();
-    if(activeRoute==='home')requestAnimationFrame(updateStory);
+    if(activeRoute==='home'&&!reducedMotion&&heroVideo.currentTime<.65)heroVideo.play().catch(welcome);
   }
   function updateHeader(){
-    const light=['about','book','account','ops','rider'].includes(activeRoute)||(activeRoute==='home'&&window.scrollY>journey.offsetTop+journey.offsetHeight-120);
+    const light=['about','book','account','ops','rider'].includes(activeRoute);
     header.classList.toggle('is-light',light);
     header.classList.toggle('is-solid',!light&&((activeRoute!=='home')||window.scrollY>85));
     header.classList.toggle('scrolled',window.scrollY>80);
   }
-  const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
-  function updateStory(){
-    if(activeRoute!=='home'||journey.hidden)return;
-    const outer=journey.getBoundingClientRect();
-    const range=Math.max(1,journey.offsetHeight-window.innerHeight);
-    const p=clamp(-outer.top/range);
-    // Map story progress to 4 independent chapters. Scrolling backwards reverses the visual story.
-    const chapter=Math.min(3,Math.floor(p*4.00001));
-    if(chapter!==currentScene){
-      currentScene=chapter;
-      stage.dataset.active=String(chapter);
-      document.querySelectorAll('[data-story-back]').forEach(el=>el.classList.toggle('active',Number(el.dataset.storyBack)===chapter));
-      document.querySelectorAll('[data-story-caption]').forEach(el=>el.classList.toggle('active',Number(el.dataset.storyCaption)===chapter));
-      $('story-count').textContent=`0${chapter+1} — 04`;
-      updateHeader();
-    }
-    $('story-progress-bar').style.width=(p*100).toFixed(2)+'%';
-    if(!reducedMotion&&chapter<3){
-      // Throttle seeks on mobile: repeated fine seeks on compressed video cause visible stutter.
-      const vid=vids[chapter];
-      const dur=(Number.isFinite(vid.duration)&&vid.duration>0)?vid.duration:0;
-      const seg=clamp(p*4-chapter);
-      const target=dur?clamp(seg*(dur-.15),0,dur-.15):0;
-      const now=performance.now();
-      if(dur&&!vid.seeking&&Math.abs(vid.currentTime-target)>.20&&now-(vid._seekAt||0)>(canHover?55:135)){
-        try{vid.pause();vid.currentTime=target;vid._seekAt=now}catch{}
-      }
-    }
-    const marker=$('demo-marker');
-    if(marker){const pr=clamp((p-.75)/.25);marker.setAttribute('transform',`translate(${(145+630*pr).toFixed(0)} ${(430-310*pr).toFixed(0)})`)}
+  function onScroll(){
+    if(scrollFrame)return;
+    scrollFrame=requestAnimationFrame(()=>{scrollFrame=0;updateHeader()});
   }
-  function onScroll(){if(scrollFrame)return;scrollFrame=requestAnimationFrame(()=>{scrollFrame=0;updateHeader();updateStory()})}
   window.addEventListener('scroll',onScroll,{passive:true});
   window.addEventListener('resize',onScroll,{passive:true});
   window.addEventListener('hashchange',showPage);
-  $('explore-journey').addEventListener('click',(ev)=>{ev.preventDefault();journey.scrollIntoView({behavior:reducedMotion?'instant':'smooth'})});
-  if(canHover&&!reducedMotion)hero.addEventListener('pointermove',ev=>{const rect=hero.getBoundingClientRect();hero.style.setProperty('--mx',(((ev.clientX-rect.left)/rect.width-.5)*12).toFixed(2)+'px');hero.style.setProperty('--my',(((ev.clientY-rect.top)/rect.height-.5)*10).toFixed(2)+'px')},{passive:true});
   // Demo data belongs only to this browser and does not sync across devices or send messages.
   let memoryOrders=[];
   function getOrders(){try{const saved=JSON.parse(localStorage.getItem(orderStorageKey)||'[]');return Array.isArray(saved)?saved:memoryOrders}catch{return memoryOrders}}
@@ -135,5 +99,5 @@
   $('rider-tasks').addEventListener('click',ev=>{const b=ev.target.closest('button[data-action="riderAdvance"]');if(!b)return;const orders=getOrders();const found=orders.find(o=>o.ref===b.dataset.ref);if(!found)return;const idx=statuses.indexOf(found.status);if(idx<1||idx>=statuses.length-1)return;found.status=statuses[idx+1];found.events=found.events||[];found.events.push({status:found.status,at:new Date().toISOString()});setOrders(orders);renderRider();renderOperations();renderTracking();});
   // Ensure that a click on the brand works even when the user is already on the home route.
   document.querySelector('.brand').addEventListener('click',()=>{if(activeRoute==='home')window.scrollTo({top:0,behavior:'smooth'})});
-  initializeHero();showPage();updateStory();
+  initializeHero();showPage();
 })();
