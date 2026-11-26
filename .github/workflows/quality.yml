@@ -1,0 +1,29 @@
+name: KINETIC code checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  static-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate code and assemble Cloudflare output
+        run: npm run build
+      - name: Verify deploy directory
+        run: |
+          test -s dist/index.html
+          test -s dist/styles.css
+          test -s dist/app.js
+          test -s dist/assets/arrival.mp4
