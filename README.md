@@ -1,23 +1,42 @@
-# KINETIC — Cinematic Logistics Website (Preview)
+# KINETIC — Logistics Website & Operations Prototype
 
-This repository contains the editable KINETIC logistics website prototype. The public site has five views: Home, About, Book & Track, Contact, and Account. It also includes separate **demo-only** dispatch and rider screens.
+**Current development focus:** refine the cinematic homepage and prepare reliable mobile-first deployment.
 
-## Current status
+## Where things live
+- **Code:** https://github.com/isaacrobinson087-max/Logistics-
+- **Hosting target:** Cloudflare Pages (Git-connected to this repository).
+- **Production branch:** `main`.
+- **Cloudflare URL:** Not assigned or verified yet. Create/connect the Pages project to receive its actual `*.pages.dev` address.
 
-- Cinematic hero and scroll-driven logistics story use user-supplied footage.
-- Booking, rider assignment and delivery progress are **local browser demonstrations** only.
-- **Not yet connected**: Firebase backend/authentication, real GPS, dispatch notifications, WhatsApp, payments.
-- No real delivery requests are accepted. Do not input sensitive personal information.
-- Third-party/stock footage licensing, logos and vehicle branding must be verified before commercial release.
+## What has been built
+Five public website views: Home, About, Book & Track, Contact and Account. The homepage uses a short truck-arrival film, simple welcome typography and short supporting sections, without 3D/cursor motion. Browser-local booking, assignment, rider updates and tracking-reference lookup are demonstrations only.
 
-## GitHub Pages preview
+The real logistics backend, login, multi-company access, rider GPS, ETA, payments and WhatsApp messaging are **not connected**. Do not enter real customer information, collect payments or present the demonstration as a live courier service.
 
-1. In the repository go to **Settings → Pages**.
-2. Choose **Deploy from a branch**, then **main**, **/(root)**, and Save.
-3. GitHub Pages generates a website address after publishing.
+## New Cloudflare Pages workflow
+The repository now includes a dependency-free build pipeline, syntax/asset checks, production output under `dist/`, static hosting headers and GitHub Actions checks.
 
-GitHub Free requires a **public repository** for Pages; private repositories can publish Pages only with eligible paid plans. Do not make the repository public until you are happy to publish the frontend code and media.
+**Cloudflare Pages settings:**
+- GitHub repository: `isaacrobinson087-max/Logistics-`
+- Production branch: `main`
+- Framework: None
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Root directory: repository root
 
-## Next engineering stage
+Full one-time connection steps: [docs/CLOUDFLARE_SETUP.md](docs/CLOUDFLARE_SETUP.md).
 
-Connect secure Firebase authentication, company data isolation, delivery state transitions and customer tracking tokens; test authorized real GPS and licensed maps before using the project operationally.
+After connecting GitHub to Cloudflare Pages, pushes to `main` will deploy automatically. We will share the confirmed Cloudflare preview URL once the project is created and its first deployment succeeds.
+
+The old GitHub Pages publishing workflow is currently retained as a fallback. Disable it **after** the Cloudflare site is verified; do not maintain two public preview hosts indefinitely.
+
+## Development checks
+No dependencies or code downloads needed for the user. For developers:
+```
+npm run check
+npm run build
+```
+The output is a static `dist/` website ready for Cloudflare Pages.
+
+## Production readiness
+Before accepting actual orders: confirm asset licenses, add secure authentication/company isolation, protected booking and status APIs, real-time sync, verified location updates with consent, audit logs, and real phone/device testing.
