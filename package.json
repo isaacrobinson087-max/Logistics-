@@ -1,0 +1,14 @@
+{
+  "name": "kinetic-logistics-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "KINETIC logistics website and browser-local demonstration",
+  "scripts": {
+    "check": "node --check app.js && node scripts/check-site.mjs",
+    "build": "npm run check && node scripts/build.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
