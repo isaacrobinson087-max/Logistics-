@@ -250,15 +250,6 @@ body.menu-open { overflow: hidden; }
   html.motion-ready #page-home [data-reveal] { opacity: 1; transform: none; transition: none; }
 }
 
-/* KINETIC — reserved, warm copper accent against existing off-white and charcoal. */
-:root{--kinetic-copper:#b66c46;--kinetic-copper-soft:#e5c0a9}
-#page-home .kinetic-intro .kinetic-kicker,
-#page-home .kinetic-visibility .kinetic-kicker{color:#a55f3e}
-#page-home .kinetic-intro .kinetic-section-top span:first-child,
-#page-home .kinetic-visibility .kinetic-section-top span:first-child{color:#a55f3e}
-#page-home .kinetic-intro-image figcaption{border-left:3px solid var(--kinetic-copper)}
-#page-home .kinetic-inline-link{border-bottom-color:var(--kinetic-copper)}
-#page-home .kinetic-inline-link:hover{color:#a55f3e}
 /* 03 / VISIBILITY — directional, reversible transitions. The observer removes
    is-visible as the section leaves view, so scrolling up unwinds the sequence. */
 html.motion-ready #page-home .kinetic-visibility-copy[data-reveal]{
@@ -311,4 +302,100 @@ html.motion-ready #page-home .kinetic-timeline.is-visible .kinetic-timeline-stat
  #page-home .kinetic-visibility-copy,#page-home .kinetic-timeline,
  #page-home .kinetic-visibility-copy h2,#page-home .kinetic-inline-link,
  #page-home .kinetic-timeline-status{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
+}
+
+/* KINETIC V9 — color is expressed in the editorial BACKGROUND, not typography.
+   A restrained marine-navy inset and burnt orange rail keep the off-white airy. */
+#page-home .kinetic-intro{
+  background:
+    linear-gradient(120deg,rgba(18,47,67,.085),transparent 42%),
+    radial-gradient(ellipse at 91% 69%,rgba(37,73,95,.13) 0%,rgba(37,73,95,0) 52%),
+    linear-gradient(90deg,#f2f0eb 0%,#f2f0eb 76%,#e5e9e9 76%,#e5e9e9 100%);
+  border-top:4px solid #c47c4d;
+}
+#page-home .kinetic-visibility{
+  background:
+    linear-gradient(111deg,rgba(21,59,84,.075) 0%,transparent 35%),
+    linear-gradient(0deg,rgba(218,226,231,.47),rgba(250,249,245,.96) 60%);
+  border-left:clamp(4px,.5vw,8px) solid #d19a76;
+}
+#page-home .kinetic-intro-image{border-bottom:4px solid #b96f48;box-shadow:18px 18px 0 rgba(20,54,72,.14)}
+#page-home .kinetic-intro-image img{filter:saturate(.92) contrast(1.04)}
+#page-home .kinetic-timeline{box-shadow:25px 25px 0 #d8e0e4}
+#page-home .kinetic-intro .kinetic-kicker,
+#page-home .kinetic-visibility .kinetic-kicker,
+#page-home .kinetic-intro .kinetic-section-top span:first-child,
+#page-home .kinetic-visibility .kinetic-section-top span:first-child{color:inherit}
+#page-home .kinetic-inline-link{border-bottom-color:#5c5a56}
+#page-home .kinetic-inline-link:hover{color:inherit}
+
+/* Section 01 and 02: continuous, reversible scroll progress.
+   JavaScript only sets --kinetic-enter (0..1); no arbitrary reveal threshold. */
+#page-home [data-scroll-animate]{--kinetic-enter:1;--kinetic-inverse:0}
+html.kinetic-motion-ready #page-home [data-scroll-animate] .motion-label-left{
+  opacity:var(--kinetic-enter);
+  transform:translate3d(calc(var(--kinetic-inverse) * -65px),0,0);
+}
+html.kinetic-motion-ready #page-home [data-scroll-animate] .motion-label-right{
+  opacity:var(--kinetic-enter);
+  transform:translate3d(calc(var(--kinetic-inverse) * 65px),0,0);
+}
+#page-home .kinetic-intro .motion-section-label{
+  display:inline-block;will-change:opacity,transform;
+}
+html.kinetic-motion-ready #page-home .kinetic-intro-text{
+  opacity:var(--kinetic-enter);
+  transform:translate3d(0,calc(var(--kinetic-inverse) * 64px),0);
+}
+html.kinetic-motion-ready #page-home .kinetic-intro-text h2{
+  filter:blur(calc(var(--kinetic-inverse) * 5px));
+  transform:translate3d(0,calc(var(--kinetic-inverse) * 22px),0);
+}
+html.kinetic-motion-ready #page-home .kinetic-intro-image{
+  opacity:var(--kinetic-enter);
+  transform:translate3d(calc(var(--kinetic-inverse) * 75px),calc(var(--kinetic-inverse) * 30px),0)
+            scale(calc(.95 + var(--kinetic-enter) * .05));
+}
+html.kinetic-motion-ready #page-home .kinetic-movement-copy{
+  opacity:var(--kinetic-enter);
+  transform:translate3d(calc(var(--kinetic-inverse) * -65px),calc(var(--kinetic-inverse) * 35px),0);
+}
+html.kinetic-motion-ready #page-home .kinetic-movement-copy h2{
+  filter:blur(calc(var(--kinetic-inverse) * 4px));
+}
+html.kinetic-motion-ready #page-home .kinetic-movement-inset{
+  opacity:var(--kinetic-enter);
+  transform:translate3d(calc(var(--kinetic-inverse) * 74px),calc(var(--kinetic-inverse) * -52px),0)
+            rotate(calc(var(--kinetic-inverse) * 4deg))
+            scale(calc(.9 + var(--kinetic-enter) * .1));
+  transform-origin:70% 50%;
+  box-shadow:0 20px 55px rgba(0,0,0,.24);
+}
+html.kinetic-motion-ready #page-home .kinetic-movement-inset img{
+  transform:scale(calc(1.04 + var(--kinetic-inverse) * .12));
+  transition:transform .12s linear;
+}
+@media(max-width:700px){
+  #page-home .kinetic-intro{
+    background:linear-gradient(160deg,rgba(38,80,105,.12),transparent 57%),
+               linear-gradient(0deg,#edf0ef,#f6f4ef);
+  }
+  #page-home .kinetic-visibility{border-left-width:4px}
+  #page-home .kinetic-intro-image{box-shadow:10px 10px 0 rgba(20,54,72,.14)}
+  #page-home .kinetic-timeline{box-shadow:12px 12px 0 #d8e0e4}
+  html.kinetic-motion-ready #page-home .kinetic-intro-image{
+    transform:translate3d(calc(var(--kinetic-inverse) * 25px),calc(var(--kinetic-inverse) * 28px),0)
+              scale(calc(.95 + var(--kinetic-enter) * .05));
+  }
+  html.kinetic-motion-ready #page-home .kinetic-movement-inset{
+    transform:translate3d(calc(var(--kinetic-inverse) * 23px),calc(var(--kinetic-inverse) * -30px),0)
+      rotate(calc(var(--kinetic-inverse) * 3deg))
+      scale(calc(.93 + var(--kinetic-enter) * .07));
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #page-home [data-scroll-animate] *,
+  #page-home [data-scroll-animate] .motion-section-label{
+    opacity:1!important;filter:none!important;transform:none!important;
+  }
 }
