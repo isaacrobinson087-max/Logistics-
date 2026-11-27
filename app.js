@@ -114,7 +114,9 @@
     parts.forEach(el=>observer.observe(el));
   }
   $('home-scroll').addEventListener('click',()=>{
-    $('home-next').scrollIntoView({behavior:reducedMotion?'auto':'smooth'});
+    const opening=$('hero');
+    const range=Math.max(0,opening.offsetHeight-window.innerHeight);
+    window.scrollTo({top:opening.offsetTop+range*.68,behavior:reducedMotion?'auto':'smooth'});
   });
   initializeReveals();showPage();
 })();
