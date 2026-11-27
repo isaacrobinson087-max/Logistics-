@@ -207,3 +207,12 @@ html.kinetic-intro-active #page-home .kinetic-scroll-hero__progress{
   overflow:auto!important;touch-action:auto;
  }
 }
+
+/* V15 — a measured booking-button moment before leaving the opening scene.
+   Adds only a small scroll range, not an empty pinned block. */
+@media(prefers-reduced-motion:no-preference){
+ #page-home .kinetic-scroll-hero{height:178svh}
+}
+@media(max-width:700px) and (prefers-reduced-motion:no-preference){
+ #page-home .kinetic-scroll-hero{height:183svh}
+}
