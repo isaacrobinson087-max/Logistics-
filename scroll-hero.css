@@ -58,3 +58,35 @@
  #page-home .kinetic-scroll-hero__progress{display:none}
  #page-home .hero-word{opacity:1!important;transform:none!important;transition:none!important}
 }
+
+/* V7 — film is a brief loading-style introduction; the full site blooms afterward. */
+html.kinetic-intro-active .header {height:80px;border-bottom-color:transparent;background:transparent!important;backdrop-filter:none!important;}
+html.kinetic-intro-active .header .brand {position:relative;z-index:1;opacity:1;transform:translateY(-2px)}
+html.kinetic-intro-active .header .nav,
+html.kinetic-intro-active .header .header-access,
+html.kinetic-intro-active .header .menu-button {
+  opacity:0!important;visibility:hidden;pointer-events:none;
+  transform:translateY(-16px);
+}
+.header .nav,.header .header-access,.header .menu-button {
+  transition:opacity .8s ease,transform .9s cubic-bezier(.16,1,.3,1),visibility .8s;
+}
+html.kinetic-intro-active #page-home .kinetic-scroll-hero__content {
+  visibility:hidden;pointer-events:none;
+}
+html.kinetic-intro-active #page-home .kinetic-scroll-hero__meta [data-scroll-readout] {opacity:0;visibility:hidden}
+html.kinetic-intro-active #page-home .kinetic-scroll-hero__meta .kinetic-scroll-hero__next {
+  opacity:.6;font-size:9px;
+}
+#page-home .kinetic-scroll-hero__meta [data-scroll-readout] {
+  transition:opacity .6s ease;
+}
+#page-home .kinetic-scroll-hero.film-finished .kinetic-scroll-hero__content {
+  visibility:visible;
+}
+#page-home .kinetic-scroll-hero.film-finished .kinetic-scroll-hero__next {opacity:1}
+#page-home .hero-word {filter:blur(7px)}
+@media(max-width:700px){
+  html.kinetic-intro-active .header {height:74px}
+  html.kinetic-intro-active .header .brand {margin-top:0}
+}
