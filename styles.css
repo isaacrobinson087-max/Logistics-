@@ -404,7 +404,7 @@ html.kinetic-motion-ready #page-home .kinetic-movement-inset img{
    The backdrop stays still while typography and imagery assemble around it. */
 #page-home .kinetic-intro[data-scroll-animate],
 #page-home .kinetic-movement[data-scroll-animate]{
-  position:relative;min-height:0;height:190svh;padding:0;overflow:visible;
+  position:relative;min-height:0;height:148svh;padding:0;overflow:visible;
 }
 #page-home .kinetic-intro[data-scroll-animate]{background:#eaeef0}
 #page-home .kinetic-intro .kinetic-scene-sticky,
@@ -516,8 +516,8 @@ html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-inset i
   transform:scale(calc(1.17 - var(--story-rider) * .17));
 }
 @media(max-width:700px){
- #page-home .kinetic-intro[data-scroll-animate]{height:185svh}
- #page-home .kinetic-movement[data-scroll-animate]{height:190svh}
+ #page-home .kinetic-intro[data-scroll-animate]{height:148svh}
+ #page-home .kinetic-movement[data-scroll-animate]{height:150svh}
  #page-home .kinetic-intro .kinetic-scene-sticky{
   padding:clamp(72px,10svh,95px) 7vw clamp(28px,5svh,45px);
  }
