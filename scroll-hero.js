@@ -18,7 +18,7 @@
   const dimensionsFor=()=>mobile.matches?[480,854]:[854,480];
   const homeActive=()=>!section.closest('.route')?.hidden;
   let folder=folderFor(),epoch=0,queue=[],cache=new Map(),pending=new Set(),inflight=0;
-  let shown=-1,frame=0,startedAt=0,lastAdvancedAt=0,raf=0,done=false,scrollRaf=0;
+  let shown=-1,frame=0,startedAt=0,raf=0,done=false,scrollRaf=0;
   let revealRaf=0,revealTime=0,revealStarted=0,scrollTarget=0,scrollPosition=0;
   const words=[...section.querySelectorAll('[data-hero-step]')];
   const header=document.getElementById('header');
@@ -69,11 +69,7 @@
     if(done)return;
     done=true;
     if(raf){cancelAnimationFrame(raf);raf=0}
-    if(staticFallback){
-      const last=cache.get(SHEETS-1);
-      if(last?.complete&&last.naturalWidth)drawSheet(last,FRAME_COUNT-1);
-      section.classList.add('is-static');
-    }
+    if(staticFallback)section.classList.add('is-static');
     section.classList.add('film-finished');
     moveBrandHome();
     setIntroVisibility(false);
@@ -112,7 +108,7 @@
       image.onload=()=>{
         if(generation!==epoch)return;
         inflight--;
-        if((n===0||n===1)&&!startedAt&&!done&&cache.get(0)?.naturalWidth&&cache.get(1)?.naturalWidth)begin();
+        if(n===0&&!startedAt&&!done)begin();
         if(done&&n===SHEETS-1)drawSheet(image,FRAME_COUNT-1);
         pump();
       };
@@ -128,30 +124,30 @@
   function begin(){
     if(done||raf||!homeActive())return;
     startedAt=performance.now();
-    lastAdvancedAt=0;
     raf=requestAnimationFrame(tick);
   }
   function tick(now){
     raf=0;
-    if(done||!homeActive()||document.hidden)return;
-    // On Android, clock-based jumps skipped the plane and rider transitions.
-    // Advance every real frame in order; buffer atlases ahead of playback.
-    const wanted=shown<0?0:Math.min(FRAME_COUNT-1,frame+1);
+    if(done||!homeActive())return;
+    if(document.hidden){raf=requestAnimationFrame(tick);return}
+    if(!startedAt)startedAt=now;
+    const wanted=Math.min(FRAME_COUNT-1,Math.floor((now-startedAt)*FPS/1000));
     const targetSheet=Math.floor(wanted/FRAMES_PER_SHEET);
-    request(targetSheet);request(targetSheet+1);request(targetSheet+2);
+    request(targetSheet);
+    request(targetSheet+1);
+    request(targetSheet+2);
     const image=cache.get(targetSheet);
     if(image?.complete&&image.naturalWidth){
-      if(!lastAdvancedAt||now-lastAdvancedAt>=1000/FPS){
-        drawSheet(image,wanted);
-        frame=wanted;
-        lastAdvancedAt=now;
-        if(progress)progress.style.transform='scaleX('+(wanted/(FRAME_COUNT-1)).toFixed(5)+')';
-        // Keep the final atlas cached so the landing image is consistent.
-        for(const key of cache.keys())if(key<targetSheet-2)cache.delete(key);
-        if(wanted===FRAME_COUNT-1){markComplete();return}
-      }
+      if(shown!==wanted)drawSheet(image,wanted);
+      frame=wanted;
+      if(progress)progress.style.transform='scaleX('+(wanted/(FRAME_COUNT-1)).toFixed(5)+')';
+      // Release long-past atlases to limit decoded image memory on phones.
+      for(const key of cache.keys())if(key<targetSheet-2)cache.delete(key);
+      if(wanted===FRAME_COUNT-1){markComplete();return}
+    }else{
+      // Hold the current frame until the next atlas arrives; don't skip ahead.
+      startedAt=now-(frame*1000/FPS);
     }
-    // If a sheet isn't ready, hold the current frame instead of skipping.
     raf=requestAnimationFrame(tick);
   }
   const easing=t=>{const x=clamp(t);return x*x*(3-2*x)};
@@ -236,7 +232,7 @@
     if(revealRaf)cancelAnimationFrame(revealRaf);
     revealRaf=0;revealTime=0;revealStarted=0;scrollTarget=0;scrollPosition=0;
     epoch++;queue=[];pending.clear();cache.clear();inflight=0;
-    folder=folderFor();shown=-1;frame=0;startedAt=0;lastAdvancedAt=0;lastCanvasSize='';done=false;
+    folder=folderFor();shown=-1;frame=0;startedAt=0;lastCanvasSize='';done=false;
     section.classList.remove('is-static','film-finished');
     if(introMark){introMarkMoved=false;introMark.hidden=false;introMark.style.transform='';introMark.style.opacity=''}
     setIntroVisibility(!motion.matches&&!lowData&&!!context);
@@ -249,7 +245,7 @@
       markComplete(true);
       return;
     }
-    request(0);request(1);request(SHEETS-1);
+    request(0);request(1);
   }
   window.addEventListener('scroll',scheduleWords,{passive:true});
   window.addEventListener('resize',()=>{
@@ -267,12 +263,12 @@
   });
   document.addEventListener('visibilitychange',()=>{
     if(!document.hidden&&!done&&homeActive()){
-      lastAdvancedAt=performance.now();
+      startedAt=performance.now()-(frame*1000/FPS);
       if(!raf)raf=requestAnimationFrame(tick);
     }
   });
   // Missing media should never leave a blank, inaccessible homepage.
-  setTimeout(()=>{if(!done)markComplete(true)},20000);
+  setTimeout(()=>{if(!done)markComplete(true)},11500);
   setup();
   scheduleWords();
 })();
