@@ -19,6 +19,7 @@
   const homeActive=()=>!section.closest('.route')?.hidden;
   let folder=folderFor(),epoch=0,queue=[],cache=new Map(),pending=new Set(),inflight=0;
   let shown=-1,frame=0,startedAt=0,lastFrameAt=0,raf=0,done=false,scrollRaf=0;
+  let loadErrors=new Map(),filmStartDeadline=0;
   let revealRaf=0,revealTime=0,revealStarted=0,scrollTarget=0,scrollPosition=0;
   const words=[...section.querySelectorAll('[data-hero-step]')];
   const header=document.getElementById('header');
@@ -112,14 +113,20 @@
       image.onload=()=>{
         if(generation!==epoch)return;
         inflight--;
-        if(!startedAt&&!done&&cache.get(0)?.naturalWidth&&cache.get(1)?.naturalWidth)begin();
-        if(done&&n===SHEETS-1)drawSheet(image,FRAME_COUNT-1);
+        // Buffer the truck, plane and ship sequence before starting the film.
+        // Otherwise a slow connection can strand the film on the airplane.
+        if(!startedAt&&!done&&[0,1,2,3,4].every(i=>cache.get(i)?.naturalWidth))begin();
+        // Do not replace the landing image after playback has completed.
         pump();
       };
       image.onerror=()=>{
         if(generation!==epoch)return;
         inflight--;cache.delete(n);
-        if(n===0)markComplete(true);
+        const attempts=(loadErrors.get(n)||0)+1;
+        loadErrors.set(n,attempts);
+        // Retry transient mobile network failures rather than freezing forever.
+        if(attempts<5&&!done)setTimeout(()=>request(n),Math.min(2400,400*attempts));
+        else if(!done)markComplete(true);
         pump();
       };
       image.src=sheetUrl(n);
@@ -233,7 +240,7 @@
     if(raf)cancelAnimationFrame(raf);
     if(revealRaf)cancelAnimationFrame(revealRaf);
     revealRaf=0;revealTime=0;revealStarted=0;scrollTarget=0;scrollPosition=0;
-    epoch++;queue=[];pending.clear();cache.clear();inflight=0;
+    epoch++;queue=[];pending.clear();cache.clear();loadErrors.clear();inflight=0;
     folder=folderFor();shown=-1;frame=0;startedAt=0;lastFrameAt=0;lastCanvasSize='';done=false;
     section.classList.remove('is-static','film-finished');
     if(introMark){introMarkMoved=false;introMark.hidden=false;introMark.style.transform='';introMark.style.opacity=''}
@@ -247,7 +254,9 @@
       markComplete(true);
       return;
     }
-    request(0);request(1);request(2);request(SHEETS-1);
+    // Load in story order: truck -> plane -> ship -> rider.
+    // Prioritize the middle transition, not the final rider frame.
+    for(let i=0;i<SHEETS;i++)request(i);
   }
   window.addEventListener('scroll',scheduleWords,{passive:true});
   window.addEventListener('resize',()=>{
@@ -270,8 +279,9 @@
     }
   });
   // Missing media should never leave a blank, inaccessible homepage.
-  // Emergency accessibility fallback only. Let all eight atlases play normally.
-  setTimeout(()=>{if(!done){request(SHEETS-1);markComplete(true)}},35000);
+  // Prevent an endless inaccessible intro only if media cannot be loaded.
+  // Normal playback never ends on the clock; it ends on the final rider frame.
+  setTimeout(()=>{if(!done)markComplete(true)},90000);
   setup();
   scheduleWords();
 })();
