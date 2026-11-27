@@ -888,3 +888,36 @@ html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-inset i
     max-width:min(65vw,290px)!important;
   }
 }
+
+
+/* V15: approved refinement — slightly deeper navy V, with dark text preserved. */
+#page-home .kinetic-intro .kinetic-scene-sticky::before{
+  clip-path:polygon(59% 0,100% 0,100% 100%,62% 100%,79% 54%);
+  -webkit-clip-path:polygon(59% 0,100% 0,100% 100%,62% 100%,79% 54%);
+}
+#page-home .kinetic-visibility::before{
+  clip-path:polygon(67% 0,100% 0,100% 100%,73% 100%,85% 50%);
+  -webkit-clip-path:polygon(67% 0,100% 0,100% 100%,73% 100%,85% 50%);
+}
+/* Keep the last-mile photo moving with the scroll rather than snapping in. */
+html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-inset{
+  will-change:transform;
+  transform-origin:center 72%;
+}
+html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-copy h2,
+html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-copy p{
+  will-change:transform,filter;
+}
+@media(max-width:700px){
+ #page-home .kinetic-intro .kinetic-scene-sticky::before{
+  clip-path:polygon(70% 0,100% 0,100% 100%,88% 100%,96% 53%);
+  -webkit-clip-path:polygon(70% 0,100% 0,100% 100%,88% 100%,96% 53%);
+ }
+ #page-home .kinetic-visibility::before{
+  clip-path:polygon(73% 0,100% 0,100% 100%,89% 100%,97% 51%);
+  -webkit-clip-path:polygon(73% 0,100% 0,100% 100%,89% 100%,97% 51%);
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #page-home .kinetic-movement .kinetic-movement-inset{transform:none!important}
+}
