@@ -106,11 +106,12 @@
       parts.forEach(el=>el.classList.add('is-visible'));return;
     }
     document.documentElement.classList.add('motion-ready');
+    // Reveal lower homepage content in both scroll directions.
     const observer=new IntersectionObserver(entries=>{
       entries.forEach(entry=>{
-        if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target)}
-      })
-    },{threshold:.1,rootMargin:'0px 0px -25px 0px'});
+        entry.target.classList.toggle('is-visible',entry.isIntersecting);
+      });
+    },{threshold:.08,rootMargin:'0px 0px -35px 0px'});
     parts.forEach(el=>observer.observe(el));
   }
   $('home-scroll').addEventListener('click',()=>{
