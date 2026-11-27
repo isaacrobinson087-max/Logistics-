@@ -707,3 +707,49 @@ html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-inset i
    padding-top:70px;
  }
 }
+
+/* V12 — remove the empty dark block between the Idea and Movement.
+   Section 02 is now a full-screen scene, NOT another extended sticky hold.
+   Keep the photograph, headline, rider, and existing reversible motion. */
+#page-home .kinetic-movement[data-scroll-animate]{
+  height:100svh!important;
+  min-height:0!important;
+  overflow:hidden;
+  margin:0;
+  padding:0;
+}
+#page-home .kinetic-movement[data-scroll-animate]>.kinetic-scene-sticky{
+  position:relative!important;
+  top:auto!important;
+  height:100svh!important;
+  min-height:0;
+  overflow:hidden;
+}
+#page-home .kinetic-movement .kinetic-movement-image,
+#page-home .kinetic-movement .kinetic-movement-image img{
+  width:100%;height:100%;object-fit:cover;
+}
+#page-home .kinetic-movement .kinetic-movement-image{
+  position:absolute;inset:0;opacity:1!important;
+}
+#page-home .kinetic-movement .kinetic-movement-copy{
+  position:relative;z-index:3;
+}
+@media(max-width:700px){
+  #page-home .kinetic-movement[data-scroll-animate]{
+    height:100svh!important;
+  }
+  #page-home .kinetic-movement .kinetic-scene-sticky{
+    justify-content:flex-end;
+    padding:75px 7vw 10svh;
+  }
+  #page-home .kinetic-movement .kinetic-movement-inset{
+    top:12svh;right:7vw;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #page-home .kinetic-movement[data-scroll-animate],
+  #page-home .kinetic-movement[data-scroll-animate]>.kinetic-scene-sticky{
+    height:auto!important;min-height:100svh;
+  }
+}
