@@ -115,57 +115,59 @@
     parts.forEach(el=>observer.observe(el));
   }
 
-  // Progressive motion is tied to position, not a one-time intersection toggle.
-  // It also reverses continuously when scrolling upward.
+  // Two scroll-driven sticky scenes. Each frame derives from the actual amount
+  // scrolled while a scene is pinned, then eases toward that progress.
+  // Scrolling upward runs the same exact sequence backward.
   function initScrollStory(){
-    const sections=[...document.querySelectorAll('#page-home [data-scroll-animate]')];
-    if(!sections.length||reducedMotion||!('requestAnimationFrame' in window))return;
-    let current=sections.map(()=>1),target=sections.map(()=>1),scheduled=0,last=0;
-    const clamp=(x)=>Math.max(0,Math.min(1,x));
-    const smooth=(x)=>{x=clamp(x);return x*x*(3-2*x)};
-    const calculate=()=>{
-      scheduled=0;
-      if(activeRoute!=='home')return;
-      const viewport=window.innerHeight||720;
-      let moving=false;
-      sections.forEach((el,index)=>{
-        const r=el.getBoundingClientRect();
-        // The presentation becomes clear as its section approaches screen center.
-        const p=smooth((viewport*.94-r.top)/(viewport*.68));
-        target[index]=p;
-        const blend=1-Math.exp(-Math.min(50,last||16)/100);
-        current[index]+=(p-current[index])*blend;
-        if(Math.abs(current[index]-p)<.001)current[index]=p;else moving=true;
-        el.style.setProperty('--kinetic-enter',current[index].toFixed(4));
-        el.style.setProperty('--kinetic-inverse',(1-current[index]).toFixed(4));
-      });
-      if(moving)scheduled=requestAnimationFrame(tick);
+    const scenes=[...document.querySelectorAll('#page-home [data-scroll-animate]')];
+    if(!scenes.length||reducedMotion)return;
+    const clamp=n=>Math.max(0,Math.min(1,n));
+    const ease=n=>{n=clamp(n);return n*n*(3-2*n)};
+    const items=scenes.map(el=>({el,position:0}));
+    let frame=0,previous=0;
+    const write=(item,p)=>{
+      const inverse=1-p;
+      const css=item.el.style;
+      css.setProperty('--kinetic-enter',p.toFixed(4));
+      css.setProperty('--kinetic-inverse',inverse.toFixed(4));
+      // Intro labels arrive first, then main title, then photograph.
+      css.setProperty('--story-label',ease(p/.30).toFixed(4));
+      css.setProperty('--story-title',ease((p-.11)/.45).toFixed(4));
+      css.setProperty('--story-copy',ease((p-.34)/.39).toFixed(4));
+      css.setProperty('--story-image',ease((p-.20)/.66).toFixed(4));
+      // Last-mile copy rises with the road, followed by the floating rider.
+      css.setProperty('--story-movement-title',ease((p-.10)/.54).toFixed(4));
+      css.setProperty('--story-movement-copy',ease((p-.44)/.42).toFixed(4));
+      css.setProperty('--story-rider',ease((p-.22)/.58).toFixed(4));
+      css.setProperty('--story-road',p.toFixed(4));
     };
-    const tick=(now)=>{
-      const dt=last?Math.min(50,now-last):16;
-      last=now;
-      scheduled=0;
-      if(activeRoute!=='home')return;
-      const viewport=window.innerHeight||720;
-      let moving=false;
-      sections.forEach((el,index)=>{
-        const r=el.getBoundingClientRect();
-        const p=smooth((viewport*.94-r.top)/(viewport*.68));
-        target[index]=p;
-        const blend=1-Math.exp(-dt/100);
-        current[index]+=(p-current[index])*blend;
-        if(Math.abs(current[index]-p)<.001)current[index]=p;else moving=true;
-        el.style.setProperty('--kinetic-enter',current[index].toFixed(4));
-        el.style.setProperty('--kinetic-inverse',(1-current[index]).toFixed(4));
-      });
-      if(moving)scheduled=requestAnimationFrame(tick);
+    const getProgress=el=>{
+      const available=Math.max(1,el.offsetHeight-window.innerHeight);
+      const top=el.getBoundingClientRect().top;
+      return ease(-top/available);
     };
-    const queue=()=>{if(!scheduled)scheduled=requestAnimationFrame(tick)};
+    function tick(now){
+      frame=0;
+      if(activeRoute!=='home')return;
+      const dt=previous?Math.min(64,now-previous):16;
+      previous=now;
+      let changing=false;
+      for(const item of items){
+        const aim=getProgress(item.el);
+        item.position+=(aim-item.position)*(1-Math.exp(-dt/125));
+        if(Math.abs(aim-item.position)<.0006)item.position=aim;
+        else changing=true;
+        write(item,item.position);
+      }
+      if(changing)frame=requestAnimationFrame(tick);
+    }
+    function schedule(){if(!frame){previous=0;frame=requestAnimationFrame(tick)}}
+    items.forEach(item=>{item.position=getProgress(item.el);write(item,item.position)});
     document.documentElement.classList.add('kinetic-motion-ready');
-    window.addEventListener('scroll',queue,{passive:true});
-    window.addEventListener('resize',queue,{passive:true});
-    window.addEventListener('hashchange',()=>{last=0;queue()});
-    queue();
+    window.addEventListener('scroll',schedule,{passive:true});
+    window.addEventListener('resize',schedule,{passive:true});
+    window.addEventListener('hashchange',schedule);
+    schedule();
   }
 
   initializeReveals();initScrollStory();showPage();
