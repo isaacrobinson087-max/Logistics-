@@ -136,16 +136,16 @@
       css.setProperty('--story-copy',ease((p-.34)/.39).toFixed(4));
       css.setProperty('--story-image',ease((p-.20)/.66).toFixed(4));
       // Last-mile copy rises with the road, followed by the floating rider.
-      css.setProperty('--story-movement-title',ease((p-.10)/.54).toFixed(4));
+      css.setProperty('--story-movement-title',(.4+.6*ease((p-.02)/.50)).toFixed(4));
       css.setProperty('--story-movement-copy',ease((p-.44)/.42).toFixed(4));
-      css.setProperty('--story-rider',ease((p-.22)/.58).toFixed(4));
+      css.setProperty('--story-rider',(.36+.64*ease((p-.07)/.56)).toFixed(4));
       css.setProperty('--story-road',p.toFixed(4));
       // Precompute pixel and scale values in JS: avoids cross-browser CSS
       // calc multiplication, especially on older Android browsers.
       const mobile=window.innerWidth<=700;
       const label=ease(p/.30),title=ease((p-.11)/.45),copy=ease((p-.34)/.39);
-      const photo=ease((p-.20)/.66),mt=ease((p-.10)/.54);
-      const mc=ease((p-.44)/.42),rider=ease((p-.22)/.58);
+      const photo=ease((p-.20)/.66),mt=.4+.6*ease((p-.02)/.50);
+      const mc=ease((p-.24)/.45),rider=.36+.64*ease((p-.07)/.56);
       const set=(name,value)=>css.setProperty(name,String(value));
       const px=n=>n.toFixed(2)+'px';
       set('--m-label-left',px((1-label)*(mobile?-38:-100)));
@@ -182,8 +182,8 @@
       // The movement scene begins revealing *before* it reaches the top.
       // That prevents a large empty dark panel from preceding the content.
       if(el.classList.contains('kinetic-movement')){
-        const lead=viewport*.72;
-        return ease((lead-top)/(available+lead*.60));
+        const lead=viewport*1.28;
+        return ease((lead-top)/(available+lead*.45));
       }
       return ease(-top/available);
     };
