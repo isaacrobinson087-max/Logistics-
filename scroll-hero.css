@@ -216,3 +216,12 @@ html.kinetic-intro-active #page-home .kinetic-scroll-hero__progress{
 @media(max-width:700px) and (prefers-reduced-motion:no-preference){
  #page-home .kinetic-scroll-hero{height:183svh}
 }
+
+/* Keep the mobile film's final rider fully visible rather than translating
+   the entire finished frame off the right edge of the screen. */
+@media (max-width:700px) {
+  #page-home .kinetic-scroll-hero.film-finished .kinetic-scroll-hero__canvas{
+    transform:translate3d(0,0,0) scale(1)!important;
+    transform-origin:center center;
+  }
+}
