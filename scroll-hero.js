@@ -18,7 +18,9 @@
   const dimensionsFor=()=>mobile.matches?[480,854]:[854,480];
   const homeActive=()=>!section.closest('.route')?.hidden;
   let folder=folderFor(),epoch=0,queue=[],cache=new Map(),pending=new Set(),inflight=0;
-  let shown=-1,frame=0,startedAt=0,raf=0,done=false,phase=-1,scrollRaf=0,awaiting=0;
+  let shown=-1,frame=0,startedAt=0,raf=0,done=false,scrollRaf=0;
+  let revealRaf=0,revealTime=0,revealStarted=0,scrollTarget=0,scrollPosition=0;
+  const words=[...section.querySelectorAll('[data-hero-step]')];
   let lastCanvasSize='';
   const sheetUrl=(n)=>'assets/scroll/'+folder+'/atlas/sheet-'+String(n+1).padStart(2,'0')+'.webp';
 
@@ -28,6 +30,7 @@
     if(raf){cancelAnimationFrame(raf);raf=0}
     if(staticFallback)section.classList.add('is-static');
     section.classList.add('film-finished');
+    revealStarted=performance.now();
     updateWords();
   }
   function drawSheet(image,index){
@@ -102,14 +105,77 @@
     }
     raf=requestAnimationFrame(tick);
   }
+  const easing=t=>{const x=clamp(t);return x*x*(3-2*x)};
+  function revealStrength(index,p){
+    // The first headline and eyebrow arrive automatically after the movie.
+    // Every later line follows continuous scroll motion in either direction.
+    if(index<2)return 1;
+    if(index===2)return easing((p-.045)/.22);
+    if(index===3)return easing((p-.285)/.22);
+    return easing((p-.505)/.23);
+  }
+  function paintWords(now){
+    if(!done||!homeActive())return;
+    if(section.classList.contains('is-static')){
+      words.forEach(el=>{el.style.opacity='1';el.style.transform='none';el.style.filter='none'});
+      return;
+    }
+    const exit=1-easing((scrollPosition-.91)/.09);
+    const initialMoves=[
+      [0,-34],[-76,5],[78,5],[0,-37],[0,39]
+    ];
+    const mobileWidth=mobile.matches;
+    words.forEach((el,index)=>{
+      const delay=index===0?0:index===1?180:0;
+      const intro=easing((now-revealStarted-delay)/(index===0?880:1050));
+      const amount=clamp(intro*revealStrength(index,scrollPosition)*exit);
+      const remainder=Math.pow(1-amount,1.15);
+      const [startX,startY]=initialMoves[index]||[0,30];
+      const dx=startX*(mobileWidth?.6:1)*remainder;
+      const dy=startY*remainder-(1-exit)*28;
+      const scale=1-.026*remainder;
+      el.style.opacity=amount.toFixed(4);
+      el.style.transform='translate3d('+dx.toFixed(2)+'px,'+dy.toFixed(2)+'px,0) scale('+scale.toFixed(4)+')';
+      el.style.filter='blur('+(Math.min(mobileWidth?4:6,6*remainder)).toFixed(2)+'px)';
+      if(el.tagName==='A'){
+        el.style.pointerEvents=amount>.75?'auto':'none';
+        el.tabIndex=amount>.75?0:-1;
+      }
+    });
+  }
+  function animateWords(now){
+    revealRaf=0;
+    if(!done||!homeActive())return;
+    const dt=revealTime?Math.min(64,now-revealTime):16.7;
+    revealTime=now;
+    // Frame-rate independent damping: smooth both forward and reverse scrolling.
+    const blend=1-Math.exp(-dt/135);
+    scrollPosition+=(scrollTarget-scrollPosition)*blend;
+    if(Math.abs(scrollTarget-scrollPosition)<.0003)scrollPosition=scrollTarget;
+    paintWords(now);
+    const introPending=now-revealStarted<1320;
+    if(introPending||Math.abs(scrollTarget-scrollPosition)>.0003)
+      revealRaf=requestAnimationFrame(animateWords);
+  }
+  function scheduleAnimation(){
+    if(!revealRaf&&done&&!section.classList.contains('is-static')){
+      revealTime=0;
+      revealRaf=requestAnimationFrame(animateWords);
+    }
+  }
   function updateWords(){
     if(!homeActive())return;
     const length=Math.max(1,section.offsetHeight-innerHeight);
     const p=clamp(-section.getBoundingClientRect().top/length);
-    const next=done?(section.classList.contains('is-static')?4:p>=.52?4:p>=.33?3:p>=.14?2:1):0;
-    if(next!==phase){section.dataset.phase=String(next);phase=next}
-    if(readout)readout.textContent=!done?'OPENING FILM':(p>=.52?'READY TO MOVE':'SCROLL TO REVEAL');
+    scrollTarget=p;
+    if(readout)readout.textContent=!done?'OPENING FILM':p>=.78?'SCROLL BACK TO REPLAY WORDS':'SCROLL TO BUILD THE MESSAGE';
     if(progress)progress.style.transform='scaleX('+p.toFixed(5)+')';
+    if(done){
+      if(section.classList.contains('is-static')){
+        section.dataset.phase='4';
+        paintWords(performance.now());
+      }else scheduleAnimation();
+    }
   }
   function scheduleWords(){
     if(scrollRaf)return;
@@ -117,8 +183,11 @@
   }
   function setup(){
     if(raf)cancelAnimationFrame(raf);
+    if(revealRaf)cancelAnimationFrame(revealRaf);
+    revealRaf=0;revealTime=0;revealStarted=0;scrollTarget=0;scrollPosition=0;
     epoch++;queue=[];pending.clear();cache.clear();inflight=0;
-    folder=folderFor();shown=-1;frame=0;startedAt=0;lastCanvasSize='';phase=-1;done=false;
+    folder=folderFor();shown=-1;frame=0;startedAt=0;lastCanvasSize='';done=false;
+    words.forEach(el=>{el.style.opacity='0';el.style.transform='none';el.style.filter='none'});
     poster.src='assets/scroll/'+folder+'/atlas/poster.webp';
     poster.classList.remove('is-loaded');
     canvas.classList.remove('is-ready');
