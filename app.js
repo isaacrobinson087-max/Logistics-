@@ -140,6 +140,40 @@
       css.setProperty('--story-movement-copy',ease((p-.44)/.42).toFixed(4));
       css.setProperty('--story-rider',ease((p-.22)/.58).toFixed(4));
       css.setProperty('--story-road',p.toFixed(4));
+      // Precompute pixel and scale values in JS: avoids cross-browser CSS
+      // calc multiplication, especially on older Android browsers.
+      const mobile=window.innerWidth<=700;
+      const label=ease(p/.30),title=ease((p-.11)/.45),copy=ease((p-.34)/.39);
+      const photo=ease((p-.20)/.66),mt=ease((p-.10)/.54);
+      const mc=ease((p-.44)/.42),rider=ease((p-.22)/.58);
+      const set=(name,value)=>css.setProperty(name,String(value));
+      const px=n=>n.toFixed(2)+'px';
+      set('--m-label-left',px((1-label)*(mobile?-38:-100)));
+      set('--m-label-right',px((1-label)*(mobile?38:100)));
+      set('--m-kicker-y',px((1-label)*32));
+      set('--m-intro-title-x',px((1-title)*(mobile?-44:-95)));
+      set('--m-intro-title-y',px((1-title)*(mobile?35:65)));
+      set('--m-intro-title-scale',(.84+title*.16).toFixed(4));
+      set('--m-intro-title-blur',px((1-title)*9));
+      set('--m-copy-y',px((1-copy)*40));
+      set('--m-photo-x',px((1-photo)*(mobile?35:95)));
+      set('--m-photo-y',px((1-photo)*45));
+      set('--m-photo-scale',(.72+photo*.28).toFixed(4));
+      set('--m-photo-inner-scale',(1.24-photo*.24).toFixed(4));
+      set('--m-road-scale',(1.13-p*.13).toFixed(4));
+      set('--m-road-x',px((1-p)*-20));
+      set('--m-road-opacity',(.52+p*.34).toFixed(4));
+      set('--m-movement-kicker-x',px((1-label)*-65));
+      set('--m-movement-title-x',px((1-mt)*(mobile?-42:-92)));
+      set('--m-movement-title-y',px((1-mt)*(mobile?35:45)));
+      set('--m-movement-title-scale',(.86+mt*.14).toFixed(4));
+      set('--m-movement-title-blur',px((1-mt)*11));
+      set('--m-movement-copy-y',px((1-mc)*53));
+      set('--m-rider-x',px((1-rider)*(mobile?54:125)));
+      set('--m-rider-y',px((1-rider)*(mobile?-72:-120)));
+      set('--m-rider-angle',((1-rider)*6).toFixed(2)+'deg');
+      set('--m-rider-scale',(.7+rider*.3).toFixed(4));
+      set('--m-rider-inner-scale',(1.17-rider*.17).toFixed(4));
     };
     const getProgress=el=>{
       const available=Math.max(1,el.offsetHeight-window.innerHeight);
