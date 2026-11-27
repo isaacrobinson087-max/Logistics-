@@ -125,3 +125,23 @@ html.kinetic-intro-active #page-home .kinetic-scroll-hero__meta .kinetic-scroll-
 @media(prefers-reduced-motion:reduce){
   #page-home .kinetic-scroll-hero__final-photo{transition:none;opacity:1}
 }
+
+/* V9 — single film subject, no duplicate rider photo. Leave space for left copy. */
+#page-home .kinetic-scroll-hero__canvas{transform-origin:60% center;transition:opacity .35s ease,transform 1.55s cubic-bezier(.19,1,.22,1)}
+#page-home .kinetic-scroll-hero.film-finished .kinetic-scroll-hero__canvas{
+  transform:translate3d(9%,0,0) scale(1.045);
+}
+#page-home .kinetic-scroll-hero__shade{
+  background:linear-gradient(90deg,rgba(6,10,17,.84) 0%,rgba(6,10,17,.43) 49%,rgba(6,10,17,.07) 100%);
+}
+@media(max-width:700px){
+  #page-home .kinetic-scroll-hero.film-finished .kinetic-scroll-hero__canvas{
+    transform:translate3d(12%,0,0) scale(1.025);
+  }
+  #page-home .kinetic-scroll-hero__shade{
+    background:linear-gradient(0deg,rgba(5,8,13,.83) 0%,rgba(5,9,14,.45) 43%,rgba(5,9,14,.1) 100%);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #page-home .kinetic-scroll-hero__canvas{transform:none!important}
+}
