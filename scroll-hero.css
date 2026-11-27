@@ -145,3 +145,24 @@ html.kinetic-intro-active #page-home .kinetic-scroll-hero__meta .kinetic-scroll-
 @media(prefers-reduced-motion:reduce){
   #page-home .kinetic-scroll-hero__canvas{transform:none!important}
 }
+
+/* Keep the single rider in the finished video on the right, leaving a clean
+   left column for headline copy. No duplicate overlay imagery. */
+#page-home .kinetic-scroll-hero__canvas{transform-origin:53% 50%}
+#page-home .kinetic-scroll-hero.film-finished .kinetic-scroll-hero__canvas{
+ transform:translate3d(16%,0,0) scale(1.015);
+}
+#page-home .kinetic-scroll-hero__shade{
+ background:linear-gradient(90deg,rgba(6,10,17,.93) 0%,rgba(6,10,17,.68) 39%,rgba(6,10,17,.02) 86%);
+}
+#page-home .kinetic-scroll-hero__content{width:min(760px,55%);padding-right:0}
+@media(max-width:700px){
+ #page-home .kinetic-scroll-hero.film-finished .kinetic-scroll-hero__canvas{
+   transform:translate3d(15%,0,0) scale(1.01);
+ }
+ #page-home .kinetic-scroll-hero__shade{
+   background:linear-gradient(90deg,rgba(5,8,13,.75),rgba(5,8,13,.2) 73%),
+              linear-gradient(0deg,rgba(5,8,13,.68),transparent 67%);
+ }
+ #page-home .kinetic-scroll-hero__content{width:100%;padding:0 7vw 21vh}
+}
