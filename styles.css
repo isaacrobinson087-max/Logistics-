@@ -921,3 +921,26 @@ html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-copy p{
 @media(prefers-reduced-motion:reduce){
  #page-home .kinetic-movement .kinetic-movement-inset{transform:none!important}
 }
+
+/* V16: screenshot-targeted last-mile animation. The motorcycle inset pops from
+   smaller to full size, while both lines of copy enter from the left.
+   JS scroll progress reverses these effects without adding blank scene height. */
+@media (prefers-reduced-motion:no-preference) {
+  html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-inset{
+    opacity:var(--story-rider,1)!important;
+    transform:translate3d(var(--m-rider-x,0px),var(--m-rider-y,0px),0)
+      rotate(var(--m-rider-angle,0deg)) scale(var(--m-rider-scale,1))!important;
+    transform-origin:50% 60%;
+    backface-visibility:hidden;
+  }
+  html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-copy h2{
+    opacity:var(--story-movement-title,1)!important;
+    transform:translate3d(var(--m-movement-title-x,0px),var(--m-movement-title-y,0px),0)
+      scale(var(--m-movement-title-scale,1))!important;
+    filter:blur(var(--m-movement-title-blur,0px))!important;
+  }
+  html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-copy > p:last-child{
+    opacity:var(--story-movement-copy,1)!important;
+    transform:translate3d(var(--m-movement-copy-x,0px),var(--m-movement-copy-y,0px),0)!important;
+  }
+}
