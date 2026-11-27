@@ -842,3 +842,49 @@ html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-inset i
    top:9svh!important;right:7vw!important;
  }
 }
+
+
+/* V14 — remove the blank mobile navy panel rather than just fading content earlier.
+   The delivery photograph occupies the entire scene, even while JS initializes. */
+#page-home .kinetic-movement[data-scroll-animate] {
+  background:#182330 url("assets/arrival.jpg") center center / cover no-repeat!important;
+}
+#page-home .kinetic-movement .kinetic-scene-sticky {
+  background:transparent!important;
+}
+#page-home .kinetic-movement .kinetic-movement-image {
+  opacity:1!important;visibility:visible!important;transform:none!important;
+}
+#page-home .kinetic-movement .kinetic-movement-image img {
+  opacity:1!important;visibility:visible!important;
+}
+@media(max-width:700px) {
+  #page-home .kinetic-movement[data-scroll-animate] {
+    height:auto!important;min-height:100svh!important;
+    overflow:visible!important;
+    background-position:55% center!important;
+  }
+  #page-home .kinetic-movement[data-scroll-animate]>.kinetic-scene-sticky {
+    position:relative!important;top:auto!important;
+    height:auto!important;min-height:100svh!important;
+    display:flex!important;flex-direction:column!important;
+    align-items:flex-start!important;justify-content:center!important;
+    padding:clamp(90px,13svh,135px) 7vw clamp(40px,7svh,75px)!important;
+  }
+  #page-home .kinetic-movement .kinetic-movement-image {
+    position:absolute!important;inset:0!important;
+  }
+  #page-home .kinetic-movement .kinetic-movement-image img {
+    object-position:55% center!important;
+  }
+  #page-home .kinetic-movement .kinetic-movement-copy {
+    position:relative!important;z-index:3!important;
+    align-self:flex-start!important;
+    margin-top:0!important;
+  }
+  #page-home .kinetic-movement .kinetic-movement-inset {
+    position:relative!important;top:auto!important;right:auto!important;
+    margin:30px 0 0 auto!important;
+    max-width:min(65vw,290px)!important;
+  }
+}
