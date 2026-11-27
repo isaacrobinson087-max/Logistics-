@@ -18,7 +18,7 @@
   const dimensionsFor=()=>mobile.matches?[480,854]:[854,480];
   const homeActive=()=>!section.closest('.route')?.hidden;
   let folder=folderFor(),epoch=0,queue=[],cache=new Map(),pending=new Set(),inflight=0;
-  let shown=-1,frame=0,startedAt=0,raf=0,done=false,scrollRaf=0;
+  let shown=-1,frame=0,startedAt=0,lastFrameAt=0,raf=0,done=false,scrollRaf=0;
   let revealRaf=0,revealTime=0,revealStarted=0,scrollTarget=0,scrollPosition=0;
   const words=[...section.querySelectorAll('[data-hero-step]')];
   const header=document.getElementById('header');
@@ -69,7 +69,11 @@
     if(done)return;
     done=true;
     if(raf){cancelAnimationFrame(raf);raf=0}
-    if(staticFallback)section.classList.add('is-static');
+    if(staticFallback){
+      const last=cache.get(SHEETS-1);
+      if(last?.complete&&last.naturalWidth)drawSheet(last,FRAME_COUNT-1);
+      section.classList.add('is-static');
+    }
     section.classList.add('film-finished');
     moveBrandHome();
     setIntroVisibility(false);
@@ -100,7 +104,7 @@
   }
   function pump(){
     const generation=epoch;
-    while(inflight<2&&queue.length){
+    while(inflight<3&&queue.length){
       const n=queue.shift();pending.delete(n);
       if(cache.has(n))continue;
       const image=new Image();image.decoding='async';
@@ -108,7 +112,7 @@
       image.onload=()=>{
         if(generation!==epoch)return;
         inflight--;
-        if(n===0&&!startedAt&&!done)begin();
+        if(!startedAt&&!done&&cache.get(0)?.naturalWidth&&cache.get(1)?.naturalWidth)begin();
         if(done&&n===SHEETS-1)drawSheet(image,FRAME_COUNT-1);
         pump();
       };
@@ -124,30 +128,28 @@
   function begin(){
     if(done||raf||!homeActive())return;
     startedAt=performance.now();
+    lastFrameAt=0;
     raf=requestAnimationFrame(tick);
   }
   function tick(now){
     raf=0;
     if(done||!homeActive())return;
-    if(document.hidden){raf=requestAnimationFrame(tick);return}
-    if(!startedAt)startedAt=now;
-    const wanted=Math.min(FRAME_COUNT-1,Math.floor((now-startedAt)*FPS/1000));
-    const targetSheet=Math.floor(wanted/FRAMES_PER_SHEET);
-    request(targetSheet);
-    request(targetSheet+1);
-    request(targetSheet+2);
-    const image=cache.get(targetSheet);
-    if(image?.complete&&image.naturalWidth){
-      if(shown!==wanted)drawSheet(image,wanted);
-      frame=wanted;
-      if(progress)progress.style.transform='scaleX('+(wanted/(FRAME_COUNT-1)).toFixed(5)+')';
-      // Release long-past atlases to limit decoded image memory on phones.
-      for(const key of cache.keys())if(key<targetSheet-2)cache.delete(key);
-      if(wanted===FRAME_COUNT-1){markComplete();return}
-    }else{
-      // Hold the current frame until the next atlas arrives; don't skip ahead.
-      startedAt=now-(frame*1000/FPS);
+    if(document.hidden)return;
+    // Never skip the aircraft -> ship -> motorcycle frames on slow phones.
+    // Advance by exactly one film frame when its atlas is ready.
+    const next=shown<0?0:Math.min(FRAME_COUNT-1,frame+1);
+    const sheet=Math.floor(next/FRAMES_PER_SHEET);
+    request(sheet);request(sheet+1);request(sheet+2);
+    const image=cache.get(sheet);
+    if(image?.complete&&image.naturalWidth && (!lastFrameAt||now-lastFrameAt>=1000/FPS)){
+      drawSheet(image,next);
+      frame=next;
+      lastFrameAt=now;
+      if(progress)progress.style.transform='scaleX('+(next/(FRAME_COUNT-1)).toFixed(5)+')';
+      for(const key of cache.keys())if(key<sheet-2)cache.delete(key);
+      if(next===FRAME_COUNT-1){markComplete();return}
     }
+    // A missing sheet holds the previous frame rather than jumping scenes.
     raf=requestAnimationFrame(tick);
   }
   const easing=t=>{const x=clamp(t);return x*x*(3-2*x)};
@@ -232,7 +234,7 @@
     if(revealRaf)cancelAnimationFrame(revealRaf);
     revealRaf=0;revealTime=0;revealStarted=0;scrollTarget=0;scrollPosition=0;
     epoch++;queue=[];pending.clear();cache.clear();inflight=0;
-    folder=folderFor();shown=-1;frame=0;startedAt=0;lastCanvasSize='';done=false;
+    folder=folderFor();shown=-1;frame=0;startedAt=0;lastFrameAt=0;lastCanvasSize='';done=false;
     section.classList.remove('is-static','film-finished');
     if(introMark){introMarkMoved=false;introMark.hidden=false;introMark.style.transform='';introMark.style.opacity=''}
     setIntroVisibility(!motion.matches&&!!context);
@@ -245,7 +247,7 @@
       markComplete(true);
       return;
     }
-    request(0);request(1);
+    request(0);request(1);request(2);request(SHEETS-1);
   }
   window.addEventListener('scroll',scheduleWords,{passive:true});
   window.addEventListener('resize',()=>{
@@ -263,12 +265,13 @@
   });
   document.addEventListener('visibilitychange',()=>{
     if(!document.hidden&&!done&&homeActive()){
-      startedAt=performance.now()-(frame*1000/FPS);
+      lastFrameAt=performance.now();
       if(!raf)raf=requestAnimationFrame(tick);
     }
   });
   // Missing media should never leave a blank, inaccessible homepage.
-  setTimeout(()=>{if(!done)markComplete(true)},11500);
+  // Emergency accessibility fallback only. Let all eight atlases play normally.
+  setTimeout(()=>{if(!done){request(SHEETS-1);markComplete(true)}},35000);
   setup();
   scheduleWords();
 })();
