@@ -155,8 +155,9 @@
     // The first headline and eyebrow arrive automatically after the movie.
     // Every later line follows continuous scroll motion in either direction.
     if(index<3)return 1;
-    if(index===3)return easing((p-.055)/.24);
-    return easing((p-.34)/.24);
+    if(index===3)return easing((p-.04)/.21);
+    // Let the booking invitation settle into a short readable hold before exit.
+    return easing((p-.23)/.23);
   }
   function paintWords(now){
     if(!done||!homeActive())return;
@@ -194,7 +195,7 @@
     const dt=revealTime?Math.min(64,now-revealTime):16.7;
     revealTime=now;
     // Frame-rate independent damping: smooth both forward and reverse scrolling.
-    const blend=1-Math.exp(-dt/135);
+    const blend=1-Math.exp(-dt/205);
     scrollPosition+=(scrollTarget-scrollPosition)*blend;
     if(Math.abs(scrollTarget-scrollPosition)<.0003)scrollPosition=scrollTarget;
     paintWords(now);
