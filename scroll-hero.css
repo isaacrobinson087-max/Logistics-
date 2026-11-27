@@ -90,3 +90,38 @@ html.kinetic-intro-active #page-home .kinetic-scroll-hero__meta .kinetic-scroll-
   html.kinetic-intro-active .header {height:74px}
   html.kinetic-intro-active .header .brand {margin-top:0}
 }
+
+/* V8: clean film with a high-quality right-side rider portrait on the final landing state. */
+#page-home .kinetic-scroll-hero__final-photo{
+  position:absolute;inset:0 0 0 auto;width:59%;height:100%;
+  z-index:1;object-fit:cover;object-position:58% 48%;
+  opacity:0;pointer-events:none;
+  transition:opacity 1.25s cubic-bezier(.2,.65,.2,1);
+  -webkit-mask-image:linear-gradient(to right,transparent,rgba(0,0,0,.9) 27%,#000 58%);
+  mask-image:linear-gradient(to right,transparent,rgba(0,0,0,.9) 27%,#000 58%);
+}
+#page-home .kinetic-scroll-hero.film-finished .kinetic-scroll-hero__final-photo{opacity:1}
+#page-home .kinetic-scroll-hero__shade{
+  background:linear-gradient(90deg,rgba(5,9,15,.76) 0%,rgba(6,11,18,.38) 45%,rgba(9,17,25,.06) 100%),
+             linear-gradient(0deg,rgba(5,9,12,.30),transparent 30%);
+}
+#page-home .kinetic-scroll-hero.film-finished .kinetic-scroll-hero__shade{opacity:.65}
+#page-home .kinetic-scroll-hero__content{width:min(790px,59%);padding-right:0}
+#page-home .kinetic-scroll-hero__heading{font-size:clamp(55px,7vw,114px)}
+#page-home .kinetic-scroll-hero__meta{justify-content:flex-start}
+@media(max-width:700px){
+  #page-home .kinetic-scroll-hero__final-photo{
+    width:91%;height:90%;inset:0 0 auto auto;
+    object-position:56% center;
+    -webkit-mask-image:linear-gradient(to right,transparent,rgba(0,0,0,.78) 38%,black 70%);
+    mask-image:linear-gradient(to right,transparent,rgba(0,0,0,.78) 38%,black 70%);
+  }
+  #page-home .kinetic-scroll-hero__content{width:100%;padding:0 7vw 21vh}
+  #page-home .kinetic-scroll-hero__heading{font-size:clamp(40px,11.4vw,75px)}
+  #page-home .kinetic-scroll-hero__shade{
+    background:linear-gradient(0deg,rgba(5,8,13,.82) 0%,rgba(5,9,14,.46) 42%,rgba(5,9,14,.08) 100%);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  #page-home .kinetic-scroll-hero__final-photo{transition:none;opacity:1}
+}
