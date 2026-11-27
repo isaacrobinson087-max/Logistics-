@@ -6,7 +6,7 @@ const output = path.join(root, "dist");
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
 
-for (const filename of ["index.html", "styles.css", "app.js", "_headers", "robots.txt"]) {
+for (const filename of ["index.html", "styles.css", "app.js", "scroll-hero.css", "scroll-hero.js", "_headers", "robots.txt"]) {
   await copyFile(path.join(root, filename), path.join(output, filename));
 }
 await cp(path.join(root, "assets"), path.join(output, "assets"), { recursive: true });
