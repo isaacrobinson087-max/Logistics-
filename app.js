@@ -136,16 +136,19 @@
       css.setProperty('--story-copy',ease((p-.34)/.39).toFixed(4));
       css.setProperty('--story-image',ease((p-.20)/.66).toFixed(4));
       // Last-mile copy rises with the road, followed by the floating rider.
-      css.setProperty('--story-movement-title',ease((p-.06)/.74).toFixed(4));
-      css.setProperty('--story-movement-copy',ease((p-.23)/.65).toFixed(4));
-      css.setProperty('--story-rider',ease((p-.09)/.79).toFixed(4));
+      css.setProperty('--story-movement-title',(window.innerWidth<=700?ease((p-.07)/.85):ease((p-.06)/.74)).toFixed(4));
+      css.setProperty('--story-movement-copy',(window.innerWidth<=700?ease((p-.12)/.80):ease((p-.23)/.65)).toFixed(4));
+      css.setProperty('--story-rider',(window.innerWidth<=700?ease((p-.21)/.71):ease((p-.09)/.79)).toFixed(4));
       css.setProperty('--story-road',p.toFixed(4));
       // Precompute pixel and scale values in JS: avoids cross-browser CSS
       // calc multiplication, especially on older Android browsers.
       const mobile=window.innerWidth<=700;
       const label=ease(p/.30),title=ease((p-.11)/.45),copy=ease((p-.34)/.39);
-      const photo=ease((p-.20)/.66),mt=ease((p-.06)/.74);
-      const mc=ease((p-.23)/.65),rider=ease((p-.09)/.79);
+      const photo=ease((p-.20)/.66),mt=mobile?ease((p-.07)/.85):ease((p-.06)/.74);
+      // On narrow screens the text leads, then the motorcycle catches up;
+      // both reach their final pose at the same scroll point.
+      const mc=mobile?ease((p-.12)/.80):ease((p-.23)/.65);
+      const rider=mobile?ease((p-.21)/.71):ease((p-.09)/.79);
       const set=(name,value)=>css.setProperty(name,String(value));
       const px=n=>n.toFixed(2)+'px';
       set('--m-label-left',px((1-label)*(mobile?-38:-100)));
@@ -198,7 +201,7 @@
       let changing=false;
       for(const item of items){
         const aim=getProgress(item.el);
-        item.position+=(aim-item.position)*(1-Math.exp(-dt/205));
+        item.position+=(aim-item.position)*(1-Math.exp(-dt/(window.innerWidth<=700?125:205)));
         if(Math.abs(aim-item.position)<.0006)item.position=aim;
         else changing=true;
         write(item,item.position);
