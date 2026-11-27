@@ -1,6 +1,6 @@
 /* KINETIC homepage: one automatic opening film, then a build-up of words on one fixed stage.
    Other public pages keep their original styling. */
-#page-home .kinetic-scroll-hero{position:relative;height:265svh;isolation:isolate;background:#080e13;color:#f7f6f4;overflow:clip}
+#page-home .kinetic-scroll-hero{position:relative;height:165svh;isolation:isolate;background:#080e13;color:#f7f6f4;overflow:clip}
 #page-home .kinetic-scroll-hero__sticky{height:100vh;height:100svh;min-height:540px;position:sticky;top:0;overflow:hidden;display:flex;align-items:center}
 #page-home .kinetic-scroll-hero__canvas,
 #page-home .kinetic-scroll-hero__poster,
@@ -37,7 +37,7 @@
 #page-home .kinetic-scroll-hero.film-finished .kinetic-scroll-hero__shade{opacity:.93}
 #page-home .kinetic-scroll-hero.is-static .hero-word{opacity:1!important;transform:none!important;filter:none!important}
 @media(max-width:700px){
- #page-home .kinetic-scroll-hero{height:250svh}
+ #page-home .kinetic-scroll-hero{height:168svh}
  #page-home .kinetic-scroll-hero__sticky{align-items:flex-end;min-height:0}
  #page-home .kinetic-scroll-hero__shade{background:linear-gradient(0deg,rgba(5,8,13,.88) 0%,rgba(5,9,14,.61) 49%,rgba(5,9,14,.13) 100%)}
  #page-home .kinetic-scroll-hero__content{width:100%;padding:0 7vw 21vh}
