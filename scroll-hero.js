@@ -100,7 +100,7 @@
   }
   function pump(){
     const generation=epoch;
-    while(inflight<(lowData?1:2)&&queue.length){
+    while(inflight<2&&queue.length){
       const n=queue.shift();pending.delete(n);
       if(cache.has(n))continue;
       const image=new Image();image.decoding='async';
@@ -235,13 +235,13 @@
     folder=folderFor();shown=-1;frame=0;startedAt=0;lastCanvasSize='';done=false;
     section.classList.remove('is-static','film-finished');
     if(introMark){introMarkMoved=false;introMark.hidden=false;introMark.style.transform='';introMark.style.opacity=''}
-    setIntroVisibility(!motion.matches&&!lowData&&!!context);
+    setIntroVisibility(!motion.matches&&!!context);
     if(progress)progress.style.transform='scaleX(0)';
     words.forEach(el=>{el.style.opacity='0';el.style.transform='none';el.style.filter='none'});
     poster.src='assets/scroll/'+folder+'/atlas/poster.webp';
     poster.classList.remove('is-loaded');
     canvas.classList.remove('is-ready');
-    if(motion.matches||lowData||!context){
+    if(motion.matches||!context){
       markComplete(true);
       return;
     }
@@ -256,7 +256,7 @@
   mobile.addEventListener?.('change',()=>{if(folderFor()!==folder)setup()});
   motion.addEventListener?.('change',setup);
   window.addEventListener('hashchange',()=>{
-    setIntroVisibility(!done&&!motion.matches&&!lowData&&!!context);
+    setIntroVisibility(!done&&!motion.matches&&!!context);
     if(homeActive()&&!done&&!raf&&startedAt)raf=requestAnimationFrame(tick);
     else if(homeActive()&&!done&&!startedAt&&cache.get(0)?.naturalWidth)begin();
     scheduleWords();
