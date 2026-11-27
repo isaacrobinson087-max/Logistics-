@@ -166,3 +166,44 @@ html.kinetic-intro-active #page-home .kinetic-scroll-hero__meta .kinetic-scroll-
  }
  #page-home .kinetic-scroll-hero__content{width:100%;padding:0 7vw 21vh}
 }
+
+/* V13: the opening film is the site-loading sequence. Logo starts at the
+   exact center, glides toward the real header mark, and the copy follows. */
+html.kinetic-intro-active,
+html.kinetic-intro-active body{
+ overflow:hidden!important;overscroll-behavior:none;touch-action:none;
+}
+#page-home .kinetic-brand-intro{
+ position:absolute;z-index:9;left:50%;top:50%;
+ transform:translate(-50%,-50%);
+ display:flex;align-items:center;justify-content:center;
+ pointer-events:none;opacity:1;visibility:visible;
+ transition:transform .92s cubic-bezier(.18,1,.25,1),opacity .75s ease .12s;
+}
+#page-home .kinetic-brand-intro[hidden]{display:none}
+#page-home .kinetic-brand-intro .brand{
+ pointer-events:none!important;display:flex;align-items:center;gap:13px;
+ color:#fff;text-shadow:0 2px 22px rgba(0,0,0,.54);
+}
+#page-home .kinetic-brand-intro .brand-symbol{
+ width:58px;height:58px;flex-shrink:0;
+}
+#page-home .kinetic-brand-intro .brand-type{
+ font-size:clamp(19px,3.2vw,27px);letter-spacing:.19em;
+}
+html.kinetic-intro-active .header .brand{
+ opacity:0!important;pointer-events:none;
+}
+html.kinetic-intro-active #page-home .kinetic-scroll-hero__progress{
+ opacity:.75;
+}
+@media(max-width:700px){
+ #page-home .kinetic-brand-intro .brand-symbol{width:48px;height:48px}
+ #page-home .kinetic-brand-intro .brand-type{font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){
+ #page-home .kinetic-brand-intro{display:none}
+ html.kinetic-intro-active,html.kinetic-intro-active body{
+  overflow:auto!important;touch-action:auto;
+ }
+}
