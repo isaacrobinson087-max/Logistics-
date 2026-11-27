@@ -176,8 +176,15 @@
       set('--m-rider-inner-scale',(1.17-rider*.17).toFixed(4));
     };
     const getProgress=el=>{
-      const available=Math.max(1,el.offsetHeight-window.innerHeight);
+      const viewport=window.innerHeight||720;
+      const available=Math.max(1,el.offsetHeight-viewport);
       const top=el.getBoundingClientRect().top;
+      // The movement scene begins revealing *before* it reaches the top.
+      // That prevents a large empty dark panel from preceding the content.
+      if(el.classList.contains('kinetic-movement')){
+        const lead=viewport*.72;
+        return ease((lead-top)/(available+lead*.60));
+      }
       return ease(-top/available);
     };
     function tick(now){
