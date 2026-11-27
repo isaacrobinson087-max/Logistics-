@@ -17,7 +17,8 @@ if (errors.length === 0) {
       errors.push("Missing public route: " + page);
     }
   }
-  if (!html.includes('id="hero-video"')) errors.push("Hero video is missing");
+  const frameHero = html.includes('data-scroll-hero') && html.includes('data-scroll-canvas') && existsSync(path.join(root, "scroll-hero.js")) && existsSync(path.join(root, "scroll-hero.css")) && existsSync(path.join(root, "assets/scroll/desktop/atlas/sheet-01.webp")) && existsSync(path.join(root, "assets/scroll/mobile/atlas/sheet-08.webp"));
+  if (!html.includes('id="hero-video"') && !frameHero) errors.push("Homepage hero media is missing");
   if (!html.includes('id="booking-form"')) errors.push("Booking demo is missing");
   if (!html.includes('id="track-results"')) errors.push("Tracking demo is missing");
   if (!html.includes('id="mobile-nav"')) errors.push("Mobile navigation is missing");
