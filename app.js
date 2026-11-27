@@ -116,6 +116,8 @@
   }
   $('home-scroll').addEventListener('click',()=>{
     const opening=$('hero');
+    // During the loading film the control skips only the intro, not the whole page.
+    if(!opening.classList.contains('film-finished'))return;
     const range=Math.max(0,opening.offsetHeight-window.innerHeight);
     window.scrollTo({top:opening.offsetTop+range*.68,behavior:reducedMotion?'auto':'smooth'});
   });
