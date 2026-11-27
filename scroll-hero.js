@@ -30,6 +30,16 @@
   const originalMark=header?.querySelector('.brand');
   if(introMark&&originalMark)introMark.append(originalMark.cloneNode(true));
   let introMarkMoved=false;
+  let introLocked=false;
+  const blockedKeys=new Set(['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' ','Spacebar']);
+  function preventIntroMovement(event){
+    if(!introLocked||!homeActive())return;
+    if(event.type==='keydown'&&!blockedKeys.has(event.key))return;
+    if(event.cancelable)event.preventDefault();
+  }
+  window.addEventListener('wheel',preventIntroMovement,{passive:false,capture:true});
+  window.addEventListener('touchmove',preventIntroMovement,{passive:false,capture:true});
+  window.addEventListener('keydown',preventIntroMovement,{capture:true});
   function moveBrandHome(){
     if(introMarkMoved||!introMark||!originalMark)return;
     introMarkMoved=true;
@@ -45,7 +55,9 @@
   }
   function setIntroVisibility(loading){
     const hidden=loading&&homeActive();
+    introLocked=hidden;
     document.documentElement.classList.toggle('kinetic-intro-active',hidden);
+    if(hidden&&window.scrollY!==0)window.scrollTo({top:0,behavior:'instant'});
     pageElements.forEach(el=>{el.inert=hidden});
     section.setAttribute('aria-busy',hidden?'true':'false');
   }
@@ -61,7 +73,8 @@
     section.classList.add('film-finished');
     moveBrandHome();
     setIntroVisibility(false);
-    revealStarted=performance.now();
+    // Let the centered logo arrive at the header before the welcome copy begins.
+    revealStarted=performance.now()+720;
     updateWords();
   }
   function drawSheet(image,index){
@@ -185,7 +198,7 @@
     scrollPosition+=(scrollTarget-scrollPosition)*blend;
     if(Math.abs(scrollTarget-scrollPosition)<.0003)scrollPosition=scrollTarget;
     paintWords(now);
-    const introPending=now-revealStarted<2000;
+    const introPending=now-revealStarted<2500;
     if(introPending||Math.abs(scrollTarget-scrollPosition)>.0003)
       revealRaf=requestAnimationFrame(animateWords);
   }
