@@ -399,3 +399,161 @@ html.kinetic-motion-ready #page-home .kinetic-movement-inset img{
     opacity:1!important;filter:none!important;transform:none!important;
   }
 }
+
+/* KINETIC — pinned choreography for 01 / THE IDEA and 02 / THE MOVEMENT.
+   The backdrop stays still while typography and imagery assemble around it. */
+#page-home .kinetic-intro[data-scroll-animate],
+#page-home .kinetic-movement[data-scroll-animate]{
+  position:relative;min-height:0;height:190svh;padding:0;overflow:visible;
+}
+#page-home .kinetic-intro[data-scroll-animate]{background:#eaeef0}
+#page-home .kinetic-intro .kinetic-scene-sticky,
+#page-home .kinetic-movement .kinetic-scene-sticky{
+  width:100%;height:100svh;min-height:0;position:sticky;top:0;
+  overflow:hidden;isolation:isolate;
+}
+#page-home .kinetic-intro .kinetic-scene-sticky{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(95px,12vh,125px) clamp(25px,7vw,124px) clamp(34px,5vh,70px);
+  background:
+   linear-gradient(115deg,rgba(244,242,237,.98) 0%,rgba(240,242,242,.96) 59%,rgba(15,47,70,.12) 100%),
+   #f2f0eb;
+}
+#page-home .kinetic-intro .kinetic-scene-sticky:after{
+  content:"";position:absolute;right:0;top:0;bottom:0;width:clamp(5px,.8vw,11px);
+  background:#bf7c50;pointer-events:none;
+}
+#page-home .kinetic-intro .kinetic-section-top{flex:0 0 auto;color:#171719}
+#page-home .kinetic-intro .kinetic-intro-grid{
+  min-height:0;flex:1;max-height:720px;
+  grid-template-columns:1.03fr .97fr;
+  gap:clamp(30px,4vw,75px);
+  padding:clamp(12px,3vh,35px) 0 0;
+}
+#page-home .kinetic-intro-image{height:min(57svh,620px);min-height:0;max-height:100%;margin:0;overflow:hidden}
+#page-home .kinetic-intro-image img{width:100%;height:100%;object-fit:cover}
+#page-home .kinetic-intro-line,#page-home .kinetic-movement-line{display:block}
+#page-home .kinetic-movement[data-scroll-animate]{min-height:0;padding:0;background:#141e27}
+#page-home .kinetic-movement .kinetic-scene-sticky{
+  display:flex;align-items:flex-end;padding:clamp(100px,14vh,155px) clamp(25px,7vw,124px) clamp(65px,12vh,130px);
+  color:#f9f8f5;background:#151d27;
+}
+#page-home .kinetic-movement .kinetic-movement-image{z-index:0}
+#page-home .kinetic-movement .kinetic-movement-copy{z-index:3;position:relative;max-width:min(790px,70%)}
+#page-home .kinetic-movement .kinetic-movement-inset{
+  top:clamp(100px,15vh,165px);right:clamp(25px,7vw,124px);
+  z-index:2;width:clamp(205px,25vw,395px);height:clamp(260px,37vh,450px);
+}
+#page-home .kinetic-intro-text,#page-home .kinetic-intro-image,
+#page-home .kinetic-movement-copy,#page-home .kinetic-movement-inset{
+  will-change:transform,opacity;
+}
+html.kinetic-motion-ready #page-home .kinetic-intro .motion-section-label{
+  opacity:var(--story-label);
+}
+html.kinetic-motion-ready #page-home .kinetic-intro .motion-label-left{
+  transform:translate3d(calc((1 - var(--story-label)) * -100px),0,0);
+}
+html.kinetic-motion-ready #page-home .kinetic-intro .motion-label-right{
+  transform:translate3d(calc((1 - var(--story-label)) * 100px),0,0);
+}
+html.kinetic-motion-ready #page-home .kinetic-intro .kinetic-intro-text{
+  opacity:1;transform:none;
+}
+html.kinetic-motion-ready #page-home .kinetic-intro .kinetic-intro-text .kinetic-kicker{
+  opacity:var(--story-label);
+  transform:translate3d(0,calc((1 - var(--story-label)) * 32px),0);
+}
+html.kinetic-motion-ready #page-home .kinetic-intro .kinetic-intro-text h2{
+  opacity:var(--story-title);
+  filter:blur(calc((1 - var(--story-title)) * 9px));
+  transform:translate3d(calc((1 - var(--story-title)) * -95px),calc((1 - var(--story-title)) * 65px),0)
+    scale(calc(.84 + var(--story-title) * .16));
+  transform-origin:left center;
+}
+html.kinetic-motion-ready #page-home .kinetic-intro .kinetic-intro-text > p:last-child{
+  opacity:var(--story-copy);transform:translate3d(0,calc((1 - var(--story-copy)) * 40px),0);
+}
+html.kinetic-motion-ready #page-home .kinetic-intro .kinetic-intro-image{
+  opacity:var(--story-image);
+  transform:translate3d(calc((1 - var(--story-image)) * 95px),calc((1 - var(--story-image)) * 45px),0)
+    scale(calc(.72 + var(--story-image) * .28));
+  transform-origin:right center;
+}
+html.kinetic-motion-ready #page-home .kinetic-intro .kinetic-intro-image img{
+  transform:scale(calc(1.24 - var(--story-image) * .24));
+}
+html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-image{
+  transform:scale(calc(1.13 - var(--story-road) * .13))
+    translate3d(calc((1 - var(--story-road)) * -2%),0,0);
+  opacity:calc(.52 + var(--story-road) * .34);
+}
+html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-copy{
+  opacity:1;transform:none;
+}
+html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-copy .kinetic-kicker{
+  opacity:var(--story-label);
+  transform:translate3d(calc((1 - var(--story-label)) * -65px),0,0);
+}
+html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-copy h2{
+  opacity:var(--story-movement-title);
+  filter:blur(calc((1 - var(--story-movement-title)) * 11px));
+  transform:translate3d(calc((1 - var(--story-movement-title)) * -92px),calc((1 - var(--story-movement-title)) * 45px),0)
+    scale(calc(.86 + var(--story-movement-title) * .14));
+  transform-origin:left center;
+}
+html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-copy > p:last-child{
+  opacity:var(--story-movement-copy);
+  transform:translate3d(0,calc((1 - var(--story-movement-copy)) * 53px),0);
+}
+html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-inset{
+  opacity:var(--story-rider);
+  transform:translate3d(calc((1 - var(--story-rider)) * 125px),calc((1 - var(--story-rider)) * -120px),0)
+    rotate(calc((1 - var(--story-rider)) * 6deg))
+    scale(calc(.7 + var(--story-rider) * .3));
+}
+html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-inset img{
+  transform:scale(calc(1.17 - var(--story-rider) * .17));
+}
+@media(max-width:700px){
+ #page-home .kinetic-intro[data-scroll-animate]{height:185svh}
+ #page-home .kinetic-movement[data-scroll-animate]{height:190svh}
+ #page-home .kinetic-intro .kinetic-scene-sticky{
+  padding:clamp(72px,10svh,95px) 7vw clamp(28px,5svh,45px);
+ }
+ #page-home .kinetic-intro .kinetic-intro-grid{
+  display:flex;flex-direction:column;justify-content:center;align-items:stretch;
+  padding-top:4svh;gap:clamp(20px,3svh,32px);flex:1;max-height:none;
+ }
+ #page-home .kinetic-intro h2{font-size:clamp(39px,10.1vw,65px)}
+ #page-home .kinetic-intro-text>p:last-child{margin-top:12px;font-size:14px;line-height:1.5}
+ #page-home .kinetic-intro .kinetic-kicker{margin-bottom:11px;font-size:9px}
+ #page-home .kinetic-intro .kinetic-section-top{font-size:8px}
+ #page-home .kinetic-intro-image{
+  width:100%;height:clamp(135px,31svh,325px);flex-shrink:1;max-height:36svh;
+ }
+ #page-home .kinetic-movement .kinetic-scene-sticky{padding:75px 7vw 9svh}
+ #page-home .kinetic-movement .kinetic-movement-inset{
+   left:auto;right:7vw;top:clamp(80px,12svh,135px);
+   width:min(47vw,240px);height:min(30svh,290px);border-width:4px;
+ }
+ #page-home .kinetic-movement .kinetic-movement-copy{max-width:100%}
+ #page-home .kinetic-movement h2{font-size:clamp(39px,9.2vw,62px)}
+ #page-home .kinetic-movement-copy > p:last-child{max-width:305px;font-size:14px}
+ html.kinetic-motion-ready #page-home .kinetic-intro .kinetic-intro-text h2{
+   transform:translate3d(calc((1 - var(--story-title)) * -44px),calc((1 - var(--story-title)) * 35px),0)
+     scale(calc(.9 + var(--story-title) * .1));
+ }
+ html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-copy h2{
+   transform:translate3d(calc((1 - var(--story-movement-title)) * -42px),calc((1 - var(--story-movement-title)) * 35px),0)
+     scale(calc(.9 + var(--story-movement-title) * .1));
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #page-home .kinetic-intro[data-scroll-animate],
+ #page-home .kinetic-movement[data-scroll-animate]{height:auto;min-height:100svh}
+ #page-home .kinetic-intro .kinetic-scene-sticky,
+ #page-home .kinetic-movement .kinetic-scene-sticky{height:auto;min-height:100svh;position:relative}
+ #page-home .kinetic-intro [class*="motion-"],
+ #page-home .kinetic-movement [class*="kinetic-"]{filter:none!important;transform:none!important;opacity:1!important}
+}
