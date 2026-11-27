@@ -6,8 +6,9 @@
   <meta name="theme-color" content="#141414" />
   <meta name="description" content="KINETIC — a modern logistics website and operations concept. Cinematic preview, demo booking and tracking." />
   <title>KINETIC — Every move matters</title>
-  <link rel="preload" href="assets/arrival.jpg" as="image" />
+  <link rel="preload" href="assets/scroll/desktop/atlas/poster.webp" as="image" type="image/webp" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="scroll-hero.css" />
 </head>
 <body>
 <a class="skip-to-content" href="#main-content">Skip to main content</a>
@@ -34,18 +35,20 @@
 </nav>
 <main id="main-content">
   <div class="route" id="page-home">
-    <section class="hero hero-simple" id="hero" aria-label="Welcome to KINETIC">
-      <div class="hero-media" aria-hidden="true">
-        <video id="hero-video" muted playsinline autoplay preload="metadata" poster="assets/arrival.jpg"><source src="assets/arrival.mp4" type="video/mp4" /></video>
-        <div class="hero-wash"></div>
+    <section class="kinetic-scroll-hero" id="hero" aria-label="KINETIC scroll journey" data-scroll-hero data-frames="120">
+      <div class="kinetic-scroll-hero__sticky">
+        <img class="kinetic-scroll-hero__poster" data-scroll-poster src="assets/scroll/desktop/atlas/poster.webp" alt="" fetchpriority="high" decoding="async"/>
+        <canvas class="kinetic-scroll-hero__canvas" data-scroll-canvas aria-hidden="true"></canvas>
+        <div class="kinetic-scroll-hero__shade" aria-hidden="true"></div>
+        <div class="kinetic-scroll-hero__content">
+          <p class="kinetic-scroll-hero__eyebrow">WELCOME TO KINETIC</p>
+          <h1 class="kinetic-scroll-hero__heading">Every move.<br/><em>Made simple.</em></h1>
+          <p class="kinetic-scroll-hero__subtitle">A clearer journey from pickup to delivery.</p>
+          <a href="#/book" class="kinetic-scroll-hero__action">Book a delivery <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="kinetic-scroll-hero__meta"><span>SCROLL TO EXPLORE</span><span data-scroll-readout aria-live="off">001 / 120</span><button class="kinetic-scroll-hero__next" id="home-scroll" type="button">SKIP THE FILM ↓</button></div>
+        <div class="kinetic-scroll-hero__progress"><span data-scroll-progress></span></div>
       </div>
-      <div class="hero-copy" id="hero-copy">
-        <p class="mini-label hero-reveal hero-from-top">WELCOME TO KINETIC</p>
-        <h1><span class="hero-line hero-reveal hero-from-left">Every move.</span><span class="hero-line hero-reveal hero-from-right"><em>Made simple.</em></span></h1>
-        <p class="hero-sub hero-reveal hero-from-bottom">A better way to move what matters.</p>
-        <a href="#/book" class="action action-light hero-reveal hero-from-bottom">Book a delivery <span aria-hidden="true">↗</span></a>
-      </div>
-      <div class="hero-bottom"><span>LOGISTICS, MADE SIMPLE</span><button class="hero-scroll" id="home-scroll" type="button">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></button></div>
     </section>
 
     <section class="kinetic-intro" id="home-next" aria-labelledby="intro-title">
@@ -191,5 +194,6 @@
 </main>
 <footer class="footer" id="footer"><span>KINETIC <b>®</b></span><span>A LOGISTICS EXPERIENCE — DESIGN PROTOTYPE</span><a href="#/contact">CONTACT ↗</a></footer>
 <script src="app.js" defer></script>
+<script src="scroll-hero.js" defer></script>
 </body>
 </html>

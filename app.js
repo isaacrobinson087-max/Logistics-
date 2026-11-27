@@ -4,28 +4,11 @@
   const header=$('header');
   const menu=$('menu-button');
   const mobileNav=$('mobile-nav');
-  const hero=$('hero');
-  const heroVideo=$('hero-video');
   const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const saveData=navigator.connection?.saveData===true;
   const orderStorageKey='kinetic_v4_demo_orders';
   const clock=(date)=>new Date(date).toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'});
   const safeString=(x)=>String(x ?? '').trim().slice(0,200);
-  let activeRoute='home', heroCompleted=false, scrollFrame=0;
-  function welcome(){if(heroCompleted)return;heroCompleted=true;hero.classList.add('has-welcomed')}
-  function initializeHero(){
-    if(reducedMotion||saveData){heroVideo.pause();welcome();return;}
-    const showWhenMoving=()=>{if(heroVideo.currentTime>=0.65)welcome()};
-    heroVideo.addEventListener('timeupdate',showWhenMoving);
-    // Cap the arrival film at roughly five seconds; scrolling never waits for it.
-    heroVideo.addEventListener('timeupdate',()=>{if(heroVideo.currentTime>=4.8){heroVideo.pause();welcome()}});
-    heroVideo.addEventListener('ended',()=>{heroVideo.pause();welcome()});
-    heroVideo.addEventListener('error',welcome);
-    const attempt=heroVideo.play();
-    if(attempt&&typeof attempt.catch==='function')attempt.catch(welcome);
-    // Welcome must stay visible if the video stalls or autoplay is blocked.
-    window.setTimeout(welcome,1450);
-  }
+  let activeRoute='home', scrollFrame=0;
   function closeMenu(returnFocus=false){const wasOpen=!mobileNav.hidden;mobileNav.hidden=true;document.body.classList.remove('menu-open');menu.setAttribute('aria-expanded','false');menu.setAttribute('aria-label','Open menu');if(returnFocus&&wasOpen)menu.focus();}
   menu.addEventListener('click',()=>{
     const open=mobileNav.hidden;mobileNav.hidden=!open;
@@ -54,12 +37,10 @@
     closeMenu();
     document.title=`KINETIC — ${{home:'Every move matters',about:'Our approach',book:'Book & Track',contact:'Contact',account:'Account access',ops:'Operations preview',rider:'Rider preview'}[activeRoute]}`;
     window.scrollTo({top:0,behavior:'auto'});
-    if(activeRoute!=='home')heroVideo.pause();
     if(activeRoute==='book')renderTracking();
     if(activeRoute==='ops')renderOperations();
     if(activeRoute==='rider')renderRider();
     updateHeader();
-    if(activeRoute==='home'&&!reducedMotion&&!saveData&&heroVideo.currentTime<.65)heroVideo.play().catch(welcome);
   }
   function updateHeader(){
     const light=['about','book','account','ops','rider'].includes(activeRoute);
@@ -135,5 +116,5 @@
   $('home-scroll').addEventListener('click',()=>{
     $('home-next').scrollIntoView({behavior:reducedMotion?'auto':'smooth'});
   });
-  initializeHero();initializeReveals();showPage();
+  initializeReveals();showPage();
 })();
