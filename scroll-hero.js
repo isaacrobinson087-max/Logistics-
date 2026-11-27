@@ -25,7 +25,6 @@
   const nav=header?.querySelector('.nav');
   const access=header?.querySelector('.header-access');
   const menu=header?.querySelector('.menu-button');
-  const introControl=document.getElementById('home-scroll');
   const pageElements=[nav,access,menu].filter(Boolean);
   function setIntroVisibility(loading){
     const hidden=loading&&homeActive();
@@ -44,10 +43,6 @@
     if(staticFallback)section.classList.add('is-static');
     section.classList.add('film-finished');
     setIntroVisibility(false);
-    if(introControl){
-      introControl.textContent='CONTINUE THE STORY ↓';
-      introControl.setAttribute('aria-label','Continue down the homepage');
-    }
     revealStarted=performance.now();
     updateWords();
   }
@@ -208,10 +203,6 @@
     folder=folderFor();shown=-1;frame=0;startedAt=0;lastCanvasSize='';done=false;
     section.classList.remove('is-static','film-finished');
     setIntroVisibility(!motion.matches&&!lowData&&!!context);
-    if(introControl){
-      introControl.textContent='SKIP INTRO ↗';
-      introControl.setAttribute('aria-label','Skip the opening film');
-    }
     if(progress)progress.style.transform='scaleX(0)';
     words.forEach(el=>{el.style.opacity='0';el.style.transform='none';el.style.filter='none'});
     poster.src='assets/scroll/'+folder+'/atlas/poster.webp';
@@ -223,10 +214,6 @@
     }
     request(0);request(1);
   }
-  document.getElementById('home-scroll')?.addEventListener('click',()=>{
-    // Don't navigate away; reveal the words here on the existing screen.
-    if(!done){markComplete();request(SHEETS-1)}
-  });
   window.addEventListener('scroll',scheduleWords,{passive:true});
   window.addEventListener('resize',()=>{
     if(folderFor()!==folder)setup();
