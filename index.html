@@ -35,18 +35,18 @@
 </nav>
 <main id="main-content">
   <div class="route" id="page-home">
-    <section class="kinetic-scroll-hero" id="hero" aria-label="KINETIC scroll journey" data-scroll-hero data-frames="120">
+    <section class="kinetic-scroll-hero" id="hero" aria-label="KINETIC opening cinematic" data-scroll-hero data-frames="120" data-phase="0">
       <div class="kinetic-scroll-hero__sticky">
         <img class="kinetic-scroll-hero__poster" data-scroll-poster src="assets/scroll/desktop/atlas/poster.webp" alt="" fetchpriority="high" decoding="async"/>
         <canvas class="kinetic-scroll-hero__canvas" data-scroll-canvas aria-hidden="true"></canvas>
         <div class="kinetic-scroll-hero__shade" aria-hidden="true"></div>
         <div class="kinetic-scroll-hero__content">
-          <p class="kinetic-scroll-hero__eyebrow">WELCOME TO KINETIC</p>
-          <h1 class="kinetic-scroll-hero__heading">Every move.<br/><em>Made simple.</em></h1>
-          <p class="kinetic-scroll-hero__subtitle">A clearer journey from pickup to delivery.</p>
-          <a href="#/book" class="kinetic-scroll-hero__action">Book a delivery <span aria-hidden="true">↗</span></a>
+          <p class="kinetic-scroll-hero__eyebrow hero-word hero-word--top" data-hero-step="1">WELCOME TO KINETIC</p>
+          <h1 class="kinetic-scroll-hero__heading"><span class="hero-word hero-word--left" data-hero-step="1">Every move.</span><span class="hero-word hero-word--right" data-hero-step="2"><em>Made simple.</em></span></h1>
+          <p class="kinetic-scroll-hero__subtitle hero-word hero-word--top" data-hero-step="3">A clearer journey from pickup to delivery.</p>
+          <a href="#/book" class="kinetic-scroll-hero__action hero-word hero-word--bottom" data-hero-step="4">Book a delivery <span aria-hidden="true">↗</span></a>
         </div>
-        <div class="kinetic-scroll-hero__meta"><span>SCROLL TO EXPLORE</span><span data-scroll-readout aria-live="off">001 / 120</span><button class="kinetic-scroll-hero__next" id="home-scroll" type="button">SKIP THE FILM ↓</button></div>
+        <div class="kinetic-scroll-hero__meta"><span data-scroll-readout aria-live="off">OPENING FILM</span><button class="kinetic-scroll-hero__next" id="home-scroll" type="button">REVEAL THE MESSAGE ↓</button></div>
         <div class="kinetic-scroll-hero__progress"><span data-scroll-progress></span></div>
       </div>
     </section>
