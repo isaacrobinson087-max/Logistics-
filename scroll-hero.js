@@ -26,6 +26,23 @@
   const access=header?.querySelector('.header-access');
   const menu=header?.querySelector('.menu-button');
   const pageElements=[nav,access,menu].filter(Boolean);
+  const introMark=section.querySelector('.kinetic-brand-intro');
+  const originalMark=header?.querySelector('.brand');
+  if(introMark&&originalMark)introMark.append(originalMark.cloneNode(true));
+  let introMarkMoved=false;
+  function moveBrandHome(){
+    if(introMarkMoved||!introMark||!originalMark)return;
+    introMarkMoved=true;
+    const target=originalMark.getBoundingClientRect();
+    const current=introMark.getBoundingClientRect();
+    const dx=(target.left+target.width/2)-(current.left+current.width/2);
+    const dy=(target.top+target.height/2)-(current.top+current.height/2);
+    const scale=Math.min(1,target.width/Math.max(1,current.width));
+    introMark.style.transform='translate(-50%,-50%) translate('+dx.toFixed(1)+'px,'+dy.toFixed(1)+'px) scale('+scale.toFixed(3)+')';
+    introMark.style.opacity='0';
+    introMark.style.pointerEvents='none';
+    window.setTimeout(()=>{introMark.hidden=true},950);
+  }
   function setIntroVisibility(loading){
     const hidden=loading&&homeActive();
     document.documentElement.classList.toggle('kinetic-intro-active',hidden);
@@ -42,6 +59,7 @@
     if(raf){cancelAnimationFrame(raf);raf=0}
     if(staticFallback)section.classList.add('is-static');
     section.classList.add('film-finished');
+    moveBrandHome();
     setIntroVisibility(false);
     revealStarted=performance.now();
     updateWords();
@@ -202,6 +220,7 @@
     epoch++;queue=[];pending.clear();cache.clear();inflight=0;
     folder=folderFor();shown=-1;frame=0;startedAt=0;lastCanvasSize='';done=false;
     section.classList.remove('is-static','film-finished');
+    if(introMark){introMarkMoved=false;introMark.hidden=false;introMark.style.transform='';introMark.style.opacity=''}
     setIntroVisibility(!motion.matches&&!lowData&&!!context);
     if(progress)progress.style.transform='scaleX(0)';
     words.forEach(el=>{el.style.opacity='0';el.style.transform='none';el.style.filter='none'});
