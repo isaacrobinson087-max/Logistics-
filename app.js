@@ -136,16 +136,16 @@
       css.setProperty('--story-copy',ease((p-.34)/.39).toFixed(4));
       css.setProperty('--story-image',ease((p-.20)/.66).toFixed(4));
       // Last-mile copy rises with the road, followed by the floating rider.
-      css.setProperty('--story-movement-title',(.18+.82*ease((p-.08)/.72)).toFixed(4));
-      css.setProperty('--story-movement-copy',ease((p-.44)/.42).toFixed(4));
-      css.setProperty('--story-rider',(.18+.82*ease((p-.06)/.76)).toFixed(4));
+      css.setProperty('--story-movement-title',ease((p-.06)/.74).toFixed(4));
+      css.setProperty('--story-movement-copy',ease((p-.23)/.65).toFixed(4));
+      css.setProperty('--story-rider',ease((p-.09)/.79).toFixed(4));
       css.setProperty('--story-road',p.toFixed(4));
       // Precompute pixel and scale values in JS: avoids cross-browser CSS
       // calc multiplication, especially on older Android browsers.
       const mobile=window.innerWidth<=700;
       const label=ease(p/.30),title=ease((p-.11)/.45),copy=ease((p-.34)/.39);
-      const photo=ease((p-.20)/.66),mt=.18+.82*ease((p-.08)/.72);
-      const mc=ease((p-.18)/.62),rider=.18+.82*ease((p-.06)/.76);
+      const photo=ease((p-.20)/.66),mt=ease((p-.06)/.74);
+      const mc=ease((p-.23)/.65),rider=ease((p-.09)/.79);
       const set=(name,value)=>css.setProperty(name,String(value));
       const px=n=>n.toFixed(2)+'px';
       set('--m-label-left',px((1-label)*(mobile?-38:-100)));
@@ -168,11 +168,12 @@
       set('--m-movement-title-y',px((1-mt)*(mobile?35:45)));
       set('--m-movement-title-scale',(.86+mt*.14).toFixed(4));
       set('--m-movement-title-blur',px((1-mt)*11));
-      set('--m-movement-copy-y',px((1-mc)*53));
-      set('--m-rider-x',px((1-rider)*(mobile?72:155)));
+      set('--m-movement-copy-y',px((1-mc)*24));
+       set('--m-movement-copy-x',px((1-mc)*(mobile?-58:-105)));
+      set('--m-rider-x',px((1-rider)*(mobile?92:145)));
       set('--m-rider-y',px((1-rider)*(mobile?52:95)));
       set('--m-rider-angle',((1-rider)*-7).toFixed(2)+'deg');
-      set('--m-rider-scale',(.64+rider*.36).toFixed(4));
+      set('--m-rider-scale',(.56+rider*.44).toFixed(4));
       set('--m-rider-inner-scale',(1.17-rider*.17).toFixed(4));
     };
     const getProgress=el=>{
@@ -182,8 +183,10 @@
       // The movement scene begins revealing *before* it reaches the top.
       // That prevents a large empty dark panel from preceding the content.
       if(el.classList.contains('kinetic-movement')){
-        const lead=viewport*1.28;
-        return ease((lead-top)/(available+lead*.45));
+        const revealStart=viewport*.93;
+         const revealDistance=viewport*.83;
+         // The rider and wording unfold within the existing section, both ways.
+         return ease((revealStart-top)/revealDistance);
       }
       return ease(-top/available);
     };
