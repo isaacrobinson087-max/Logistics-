@@ -114,5 +114,59 @@
     },{threshold:.08,rootMargin:'0px 0px -35px 0px'});
     parts.forEach(el=>observer.observe(el));
   }
-  initializeReveals();showPage();
+
+  // Progressive motion is tied to position, not a one-time intersection toggle.
+  // It also reverses continuously when scrolling upward.
+  function initScrollStory(){
+    const sections=[...document.querySelectorAll('#page-home [data-scroll-animate]')];
+    if(!sections.length||reducedMotion||!('requestAnimationFrame' in window))return;
+    let current=sections.map(()=>1),target=sections.map(()=>1),scheduled=0,last=0;
+    const clamp=(x)=>Math.max(0,Math.min(1,x));
+    const smooth=(x)=>{x=clamp(x);return x*x*(3-2*x)};
+    const calculate=()=>{
+      scheduled=0;
+      if(activeRoute!=='home')return;
+      const viewport=window.innerHeight||720;
+      let moving=false;
+      sections.forEach((el,index)=>{
+        const r=el.getBoundingClientRect();
+        // The presentation becomes clear as its section approaches screen center.
+        const p=smooth((viewport*.94-r.top)/(viewport*.68));
+        target[index]=p;
+        const blend=1-Math.exp(-Math.min(50,last||16)/100);
+        current[index]+=(p-current[index])*blend;
+        if(Math.abs(current[index]-p)<.001)current[index]=p;else moving=true;
+        el.style.setProperty('--kinetic-enter',current[index].toFixed(4));
+        el.style.setProperty('--kinetic-inverse',(1-current[index]).toFixed(4));
+      });
+      if(moving)scheduled=requestAnimationFrame(tick);
+    };
+    const tick=(now)=>{
+      const dt=last?Math.min(50,now-last):16;
+      last=now;
+      scheduled=0;
+      if(activeRoute!=='home')return;
+      const viewport=window.innerHeight||720;
+      let moving=false;
+      sections.forEach((el,index)=>{
+        const r=el.getBoundingClientRect();
+        const p=smooth((viewport*.94-r.top)/(viewport*.68));
+        target[index]=p;
+        const blend=1-Math.exp(-dt/100);
+        current[index]+=(p-current[index])*blend;
+        if(Math.abs(current[index]-p)<.001)current[index]=p;else moving=true;
+        el.style.setProperty('--kinetic-enter',current[index].toFixed(4));
+        el.style.setProperty('--kinetic-inverse',(1-current[index]).toFixed(4));
+      });
+      if(moving)scheduled=requestAnimationFrame(tick);
+    };
+    const queue=()=>{if(!scheduled)scheduled=requestAnimationFrame(tick)};
+    document.documentElement.classList.add('kinetic-motion-ready');
+    window.addEventListener('scroll',queue,{passive:true});
+    window.addEventListener('resize',queue,{passive:true});
+    window.addEventListener('hashchange',()=>{last=0;queue()});
+    queue();
+  }
+
+  initializeReveals();initScrollStory();showPage();
 })();
