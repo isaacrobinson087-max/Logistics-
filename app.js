@@ -114,12 +114,5 @@
     },{threshold:.08,rootMargin:'0px 0px -35px 0px'});
     parts.forEach(el=>observer.observe(el));
   }
-  $('home-scroll').addEventListener('click',()=>{
-    const opening=$('hero');
-    // During the loading film the control skips only the intro, not the whole page.
-    if(!opening.classList.contains('film-finished'))return;
-    const range=Math.max(0,opening.offsetHeight-window.innerHeight);
-    window.scrollTo({top:opening.offsetTop+range*.68,behavior:reducedMotion?'auto':'smooth'});
-  });
   initializeReveals();showPage();
 })();
