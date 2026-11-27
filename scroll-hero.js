@@ -21,6 +21,19 @@
   let shown=-1,frame=0,startedAt=0,raf=0,done=false,scrollRaf=0;
   let revealRaf=0,revealTime=0,revealStarted=0,scrollTarget=0,scrollPosition=0;
   const words=[...section.querySelectorAll('[data-hero-step]')];
+  const header=document.getElementById('header');
+  const nav=header?.querySelector('.nav');
+  const access=header?.querySelector('.header-access');
+  const menu=header?.querySelector('.menu-button');
+  const introControl=document.getElementById('home-scroll');
+  const pageElements=[nav,access,menu].filter(Boolean);
+  function setIntroVisibility(loading){
+    const hidden=loading&&homeActive();
+    document.documentElement.classList.toggle('kinetic-intro-active',hidden);
+    pageElements.forEach(el=>{el.inert=hidden});
+    section.setAttribute('aria-busy',hidden?'true':'false');
+  }
+
   let lastCanvasSize='';
   const sheetUrl=(n)=>'assets/scroll/'+folder+'/atlas/sheet-'+String(n+1).padStart(2,'0')+'.webp';
 
@@ -30,6 +43,11 @@
     if(raf){cancelAnimationFrame(raf);raf=0}
     if(staticFallback)section.classList.add('is-static');
     section.classList.add('film-finished');
+    setIntroVisibility(false);
+    if(introControl){
+      introControl.textContent='CONTINUE THE STORY ↓';
+      introControl.setAttribute('aria-label','Continue down the homepage');
+    }
     revealStarted=performance.now();
     updateWords();
   }
@@ -96,6 +114,7 @@
     if(image?.complete&&image.naturalWidth){
       if(shown!==wanted)drawSheet(image,wanted);
       frame=wanted;
+      if(progress)progress.style.transform='scaleX('+(wanted/(FRAME_COUNT-1)).toFixed(5)+')';
       // Release long-past atlases to limit decoded image memory on phones.
       for(const key of cache.keys())if(key<targetSheet-2)cache.delete(key);
       if(wanted===FRAME_COUNT-1){markComplete();return}
@@ -109,10 +128,9 @@
   function revealStrength(index,p){
     // The first headline and eyebrow arrive automatically after the movie.
     // Every later line follows continuous scroll motion in either direction.
-    if(index<2)return 1;
-    if(index===2)return easing((p-.045)/.22);
-    if(index===3)return easing((p-.285)/.22);
-    return easing((p-.505)/.23);
+    if(index<3)return 1;
+    if(index===3)return easing((p-.055)/.24);
+    return easing((p-.34)/.24);
   }
   function paintWords(now){
     if(!done||!homeActive())return;
@@ -126,8 +144,9 @@
     ];
     const mobileWidth=mobile.matches;
     words.forEach((el,index)=>{
-      const delay=index===0?0:index===1?180:0;
-      const intro=easing((now-revealStarted-delay)/(index===0?880:1050));
+      const delays=[130,440,920,0,0];
+      const delay=delays[index]||0;
+      const intro=easing((now-revealStarted-delay)/(index<3?950:850));
       const amount=clamp(intro*revealStrength(index,scrollPosition)*exit);
       const remainder=Math.pow(1-amount,1.15);
       const [startX,startY]=initialMoves[index]||[0,30];
@@ -153,7 +172,7 @@
     scrollPosition+=(scrollTarget-scrollPosition)*blend;
     if(Math.abs(scrollTarget-scrollPosition)<.0003)scrollPosition=scrollTarget;
     paintWords(now);
-    const introPending=now-revealStarted<1320;
+    const introPending=now-revealStarted<2000;
     if(introPending||Math.abs(scrollTarget-scrollPosition)>.0003)
       revealRaf=requestAnimationFrame(animateWords);
   }
@@ -168,8 +187,8 @@
     const length=Math.max(1,section.offsetHeight-innerHeight);
     const p=clamp(-section.getBoundingClientRect().top/length);
     scrollTarget=p;
-    if(readout)readout.textContent=!done?'OPENING FILM':p>=.78?'SCROLL BACK TO REPLAY WORDS':'SCROLL TO BUILD THE MESSAGE';
-    if(progress)progress.style.transform='scaleX('+p.toFixed(5)+')';
+    if(readout)readout.textContent=!done?'':p>=.78?'SCROLL UP TO REVISIT':'SCROLL TO BUILD THE STORY';
+    if(progress&&done)progress.style.transform='scaleX('+p.toFixed(5)+')';
     if(done){
       if(section.classList.contains('is-static')){
         section.dataset.phase='4';
@@ -187,6 +206,13 @@
     revealRaf=0;revealTime=0;revealStarted=0;scrollTarget=0;scrollPosition=0;
     epoch++;queue=[];pending.clear();cache.clear();inflight=0;
     folder=folderFor();shown=-1;frame=0;startedAt=0;lastCanvasSize='';done=false;
+    section.classList.remove('is-static','film-finished');
+    setIntroVisibility(!motion.matches&&!lowData&&!!context);
+    if(introControl){
+      introControl.textContent='SKIP INTRO ↗';
+      introControl.setAttribute('aria-label','Skip the opening film');
+    }
+    if(progress)progress.style.transform='scaleX(0)';
     words.forEach(el=>{el.style.opacity='0';el.style.transform='none';el.style.filter='none'});
     poster.src='assets/scroll/'+folder+'/atlas/poster.webp';
     poster.classList.remove('is-loaded');
@@ -210,6 +236,7 @@
   mobile.addEventListener?.('change',()=>{if(folderFor()!==folder)setup()});
   motion.addEventListener?.('change',setup);
   window.addEventListener('hashchange',()=>{
+    setIntroVisibility(!done&&!motion.matches&&!lowData&&!!context);
     if(homeActive()&&!done&&!raf&&startedAt)raf=requestAnimationFrame(tick);
     else if(homeActive()&&!done&&!startedAt&&cache.get(0)?.naturalWidth)begin();
     scheduleWords();
