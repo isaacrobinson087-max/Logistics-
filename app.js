@@ -191,7 +191,10 @@
          // The rider and wording unfold within the existing section, both ways.
          return ease((revealStart-top)/revealDistance);
       }
-      return ease(-top/available);
+      // Begin building the Idea while it enters the viewport, not after its
+      // sticky stage reaches the top. Prevents an empty white panel on phones.
+      const lead=viewport*(window.innerWidth<=700?.84:.65);
+      return ease((lead-top)/(available+lead));
     };
     function tick(now){
       frame=0;
