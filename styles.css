@@ -311,15 +311,15 @@ html.motion-ready #page-home .kinetic-timeline.is-visible .kinetic-timeline-stat
     linear-gradient(120deg,rgba(18,47,67,.085),transparent 42%),
     radial-gradient(ellipse at 91% 69%,rgba(37,73,95,.13) 0%,rgba(37,73,95,0) 52%),
     linear-gradient(90deg,#f2f0eb 0%,#f2f0eb 76%,#e5e9e9 76%,#e5e9e9 100%);
-  border-top:4px solid #c47c4d;
+  border-top:0;
 }
 #page-home .kinetic-visibility{
   background:
     linear-gradient(111deg,rgba(21,59,84,.075) 0%,transparent 35%),
     linear-gradient(0deg,rgba(218,226,231,.47),rgba(250,249,245,.96) 60%);
-  border-left:clamp(4px,.5vw,8px) solid #d19a76;
+  border-left:0;
 }
-#page-home .kinetic-intro-image{border-bottom:4px solid #b96f48;box-shadow:18px 18px 0 rgba(20,54,72,.14)}
+#page-home .kinetic-intro-image{border-bottom:0;box-shadow:18px 18px 0 rgba(20,54,72,.14)}
 #page-home .kinetic-intro-image img{filter:saturate(.92) contrast(1.04)}
 #page-home .kinetic-timeline{box-shadow:25px 25px 0 #d8e0e4}
 #page-home .kinetic-intro .kinetic-kicker,
@@ -421,7 +421,7 @@ html.kinetic-motion-ready #page-home .kinetic-movement-inset img{
 }
 #page-home .kinetic-intro .kinetic-scene-sticky:after{
   content:"";position:absolute;right:0;top:0;bottom:0;width:clamp(5px,.8vw,11px);
-  background:#bf7c50;pointer-events:none;
+  background:transparent;pointer-events:none;
 }
 #page-home .kinetic-intro .kinetic-section-top{flex:0 0 auto;color:#171719}
 #page-home .kinetic-intro .kinetic-intro-grid{
@@ -587,3 +587,101 @@ html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-inset{
    rotate(var(--m-rider-angle,0deg)) scale(var(--m-rider-scale,1))
 }
 html.kinetic-motion-ready #page-home .kinetic-movement .kinetic-movement-inset img{transform:scale(var(--m-rider-inner-scale,1))}
+
+/* KINETIC LOCKED PALETTE — 27 Nov 2026.
+   Based on user reference: midnight blue -> graphite -> silver -> pale.
+   Absolutely no orange decoration. Preserve dark type on light text areas.
+   Only homepage editorial backgrounds change; hero, moving footage,
+   motion choreography, original logomark and approved finale stay intact. */
+#page-home .kinetic-intro[data-scroll-animate]{
+  background:#e3e6eb;
+  border:0;
+}
+#page-home .kinetic-intro .kinetic-scene-sticky{
+  background:
+    linear-gradient(90deg,
+      rgba(244,245,247,.98) 0%,
+      rgba(243,244,246,.97) 34%,
+      rgba(237,239,243,.92) 48%,
+      rgba(223,227,233,.74) 63%,
+      rgba(228,230,235,.03) 86%),
+    linear-gradient(180deg,
+      #0d1423 0%,
+      #151c2b 19%,
+      #303747 40%,
+      #737a87 63%,
+      #c5cad2 83%,
+      #f4f5f7 100%);
+  background-color:#f0f1f3;
+  color:#171719;
+}
+#page-home .kinetic-intro .kinetic-scene-sticky::after{
+  display:none!important;
+}
+#page-home .kinetic-intro .kinetic-section-top,
+#page-home .kinetic-intro-text,
+#page-home .kinetic-intro-text h2,
+#page-home .kinetic-intro .kinetic-kicker{
+  color:#171719;
+}
+#page-home .kinetic-intro-image{
+  border:0;
+  box-shadow:19px 19px 0 rgba(17,29,47,.15);
+}
+#page-home .kinetic-intro-image figcaption{
+  border:0;
+  background:rgba(15,25,40,.88);
+}
+#page-home .kinetic-visibility{
+  border:0;
+  color:#171719;
+  background:
+    linear-gradient(90deg,
+      rgba(244,245,247,.97) 0%,
+      rgba(243,244,246,.98) 34%,
+      rgba(236,239,243,.86) 51%,
+      rgba(236,239,243,.18) 80%),
+    linear-gradient(180deg,
+      #11192a 0%,
+      #2f384a 26%,
+      #797f8a 59%,
+      #d4d7de 88%,
+      #f4f5f7 100%);
+}
+#page-home .kinetic-visibility .kinetic-section-top,
+#page-home .kinetic-visibility .kinetic-kicker,
+#page-home .kinetic-visibility-copy h2{
+  color:#171719;
+}
+#page-home .kinetic-timeline{
+  box-shadow:25px 25px 0 rgba(18,33,53,.20);
+}
+#page-home .kinetic-inline-link{
+  border-bottom-color:#303a4c;
+}
+@media(max-width:950px){
+  /* On phones and small tablets, keep the whole text area light;
+     put the cinematic dark gradient in the upper-right visual field. */
+  #page-home .kinetic-intro .kinetic-scene-sticky{
+    background:
+      linear-gradient(0deg,
+       rgba(244,245,247,.98) 0%,
+       rgba(242,243,246,.98) 47%,
+       rgba(239,241,244,.91) 62%,
+       rgba(235,238,243,.52) 79%,
+       rgba(235,238,243,.08) 100%),
+      linear-gradient(180deg,
+       #0d1423 0%,#2b3343 25%,#747d8b 56%,#c7ccd5 80%,#f4f5f7 100%);
+  }
+  #page-home .kinetic-visibility{
+    background:
+      linear-gradient(0deg,rgba(244,245,247,.98),rgba(239,241,245,.93) 72%,rgba(235,239,245,.55)),
+      linear-gradient(180deg,#172236,#6b7280 53%,#f4f5f7);
+  }
+  #page-home .kinetic-intro-image{
+    box-shadow:10px 10px 0 rgba(17,29,47,.16);
+  }
+  #page-home .kinetic-timeline{
+    box-shadow:12px 12px 0 rgba(18,33,53,.20);
+  }
+}
